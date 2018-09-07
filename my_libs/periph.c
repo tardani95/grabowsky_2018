@@ -60,13 +60,6 @@ void InitRCC(void){
 #endif
 }
 
-void InitSysTick(void){
-	RCC_ClocksTypeDef   clkConfStruct;
-	RCC_GetClocksFreq(&clkConfStruct);
-
-	SysTick_Config(clkConfStruct.SYSCLK_Frequency/10000-1); /* 0.1ms/SysClk tick */
-}
-
 
 
 void InitGPIO(void){
