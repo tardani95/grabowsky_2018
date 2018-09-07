@@ -1,0 +1,6 @@
+nav.c:18:6:InitNav	8	static
+nav.c:24:6:InitCapture	16	static
+nav.c:35:6:GetClkFreq	32	static
+nav.c:48:6:EXTI9_5_IRQHandler	8	static
+nav.c:80:6:EXTI15_10_IRQHandler	8	static
+nav.c:94:6:TIM1_IRQHandler	24	static

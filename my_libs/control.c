@@ -1,0 +1,67 @@
+#include "control.h"
+
+
+/* control loop @1kHz */
+
+
+float T=0.001;
+
+float Kp=1.5; /* P */
+float Ki=0.05; /* I */
+float Kd=0.1; /* D */
+
+float e=0;
+float e_d=0;
+
+float e_max=2000.0;
+
+float I=0;
+float D=0;
+
+float Imax=1.0; /* anti wind-up */
+
+
+float v_max=0.3;
+
+float v_base=0.4;
+
+#define N_AVG 10
+
+float s=0;
+
+float v=0;
+
+void TIM4_IRQHandler(void){
+
+
+	if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET){
+        TIM_ClearITPendingBit(TIM4,  TIM_IT_Update);
+
+        readADC();
+
+        e_d=e;
+
+        e=(adcBuf[1]-adcBuf[2])/e_max; /* L-R */
+
+        D=Kd*(e-e_d)/T;
+
+        I+=Ki*e;
+
+        if(I>Imax)
+        	I=Imax;
+        if(I<-Imax)
+        	I=-Imax;
+
+        I=0;
+        s=Kp*e+I+D;
+
+
+        v=v_max*s/3.5;
+
+
+		MotCtl(v_base+v,MOT_L);
+		MotCtl(v_base-v,MOT_R);
+
+
+   }
+}
