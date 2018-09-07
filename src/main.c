@@ -48,7 +48,15 @@ Info        : 07-09-2018
 /*==========================================================================*/
 /*                          Private functions								*/
 /*==========================================================================*/
+#ifdef DEBUG
+	#include "stm32f10x_dbgmcu.h"
 
+	void InitDBG(void){
+		DBGMCU_Config(DBGMCU_TIM2_STOP, ENABLE); /* this will make TIM2 stop when core is halted during debug */
+		DBGMCU_Config(DBGMCU_TIM3_STOP, ENABLE);
+		DBGMCU_Config(DBGMCU_STOP, ENABLE);
+	}
+#endif
 
 /*==========================================================================*/
 /*  							Main program								*/
@@ -56,6 +64,13 @@ Info        : 07-09-2018
 int main(void){
 
 	SystemInit();
+
+#ifdef DEBUG
+	InitDBG();
+#endif
+
+	/* configure SysTick for delay functions */
+	InitSysTick();
 
 
 	InitPeriph();

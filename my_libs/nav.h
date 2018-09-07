@@ -25,11 +25,4 @@ void InitNav(void);
 void InitCapture(capture* capStruct);
 
 
-
-
-
-
-
-
-
 #endif

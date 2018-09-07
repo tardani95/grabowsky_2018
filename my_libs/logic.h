@@ -3,14 +3,4 @@
 #define _LOGIC_H
 
 
-
-
-
-
-
-
-
-
-
-
 #endif
