@@ -441,30 +441,3 @@ void MotCtl(float duty,uint8_t side){
 
 
 
-
-
-
-/* increment SysTick counter, useful for delay functions */
-/* with systick f=10kHz, it overflows every 4.9 days */
-
-__IO uint32_t SysTickCnt=0;
-
-
-__IO uint8_t hbState=0; /* heartbeat */
-
-void SysTick_Handler(void){
-	SysTickCnt++;
-
-	if(SysTickCnt%5000==0){
-		if(hbState)
-			GPIO_SetBits(PORT_LED1, PIN_LED1);
-		else
-			GPIO_ResetBits(PORT_LED1, PIN_LED1);
-
-		hbState=!hbState;
-	}
-
-}
-
-
-

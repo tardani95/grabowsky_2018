@@ -1,11 +1,20 @@
-/* defines peripheral mapping and provides high level peripheral init and control functions */
-/* pins are not remapped, unless otherwise noted */
+/*
+******************************************************************************
+File        : periph.h
+Author      : Peter Vass - modified and extended by Daniel Tar
+Version     :
+Copyright   :
+Description : defines peripheral mapping and provides high level peripheral init and control functions
+			  pins are not remapped, unless otherwise noted
+Info        : 07.09.2018
+*******************************************************************************
+*/
+#ifndef _PERIPH_H_
+#define _PERIPH_H_
 
-
-#ifndef _PERIPH_H
-
-#define _PERIPH_H
-
+/*========================================================================*/
+/*                             INCLUDES									  */
+/*========================================================================*/
 #include <math.h>
 #include "conf.h"
 #include "util.h"
@@ -18,7 +27,12 @@
 #include "stm32f10x_exti.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_dma.h"
+
+/* High level functions for NVIC and SysTick (add-on to CMSIS functions)
+ * NVIC - Nested Vector Interrupt Controller
+ */
 #include "misc.h" /* NVIC configuration */
+/*========================================================================*/
 
 /* phototransitor ADC input pins */
 #define  PIN_Q_RS GPIO_Pin_0
