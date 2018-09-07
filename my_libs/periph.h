@@ -149,7 +149,7 @@ Info        : 07.09.2018
 /* external vars */
 
 extern uint16_t adcBuf[4];
-extern __IO uint32_t SysTickCnt;
+//extern __IO uint32_t SysTickCnt;
 extern uint8_t go;
 
 /* init functions */
