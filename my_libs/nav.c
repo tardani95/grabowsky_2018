@@ -40,7 +40,7 @@ void GetClkFreq(void)
 	timer1_clk = clkConfStruct.PCLK2_Frequency/1000;/*kHz; if APB2 prescaler = 1!!!*/
 }
 
-float duty_start = MOT_PWM_MAX_DUTY/2;
+float duty_start = 0; //MOT_PWM_MAX_DUTY/2;
 
 uint8_t dir_L = 0, dir_R = 0;
 uint8_t go = 0;/*for enabling/disabling control, global variable*/

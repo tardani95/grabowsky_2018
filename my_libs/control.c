@@ -21,9 +21,9 @@ float D=0;
 float Imax=1.0; /* anti wind-up */
 
 
-float v_max=0.3;
+float v_max=0.0;
 
-float v_base=0.4;
+float v_base=0.0; //0.4
 
 #define N_AVG 10
 
