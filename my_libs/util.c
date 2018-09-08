@@ -32,7 +32,7 @@ __IO uint8_t hbState=0;		 	/* heartbeat */
 void SysTick_Handler(void){
 	SysTickCount++;
 
-	if(SysTickCount%1000==0){
+	if(SysTickCount%2000==0){
 			if(hbState){
 				GPIO_SetBits(PORT_LED1, PIN_LED1);
 			}

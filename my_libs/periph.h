@@ -34,8 +34,8 @@ Info        : 07.09.2018
 #include "misc.h" /* NVIC configuration */
 /*========================================================================*/
 
-/* phototransitor ADC input pins */
-#define  PIN_Q_RS GPIO_Pin_0
+/* phototransitor ADC input pins  - DID NOT USE*/
+/*#define  PIN_Q_RS GPIO_Pin_0
 #define PORT_Q_RS GPIOA
 
 #define  PIN_Q_RF GPIO_Pin_1
@@ -45,7 +45,7 @@ Info        : 07.09.2018
 #define PORT_Q_LF GPIOA
 
 #define  PIN_Q_LS GPIO_Pin_3
-#define PORT_Q_LS GPIOA
+#define PORT_Q_LS GPIOA*/
 
 /* IR diode output pins, TIM3 channels */
 #define  PIN_D_RS GPIO_Pin_7
@@ -73,7 +73,7 @@ Info        : 07.09.2018
 #define PORT_SW0 GPIOB
 
 /* motor driver outputs */
-/* REMAP: AE=TIM3_CH2, BE=TIM3_CH1 */
+/* REMAP: AE=TIM2_CH2, BE=TIM2_CH1 */
 #define  PIN_DRV_AE GPIO_Pin_15
 #define PORT_DRV_AE GPIOA
 
@@ -107,10 +107,10 @@ Info        : 07.09.2018
 
 
 /* i2c pins */
-#define  PIN_SDA GPIO_Pin_11 /* TIM1_CH3 */
+#define  PIN_SDA GPIO_Pin_11 /* TIM2_CH3 */
 #define PORT_SDA GPIOB
 
-#define  PIN_SCL GPIO_Pin_10 /* TIM1_CH4 */
+#define  PIN_SCL GPIO_Pin_10 /* TIM2_CH4 */
 #define PORT_SCL GPIOB
 
 /* usart pins */

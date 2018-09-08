@@ -347,7 +347,7 @@ void InitTIM2(void){
 
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
 
-	/* Channel 1, 2,3 and 4 Configuration in PWM mode */
+	/* Channel 1, 2 Configuration in PWM mode */
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Disable;
