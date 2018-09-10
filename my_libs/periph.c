@@ -83,7 +83,8 @@ void InitGPIO(void){
 
 	/* GPIOA, inputs */
 	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIOInitStruct.GPIO_Pin= PIN_ENC_IDX_R | PIN_ENC_LSB_R | PIN_ENC_DIR_R | PIN_ENC_LSB_L | PIN_ENC_DIR_L;
+//	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IPD;
+	GPIOInitStruct.GPIO_Pin= /*PIN_ENC_IDX_R | PIN_ENC_LSB_R | PIN_ENC_DIR_R |*/ PIN_ENC_LSB_L | PIN_ENC_DIR_L;
 
 	GPIO_Init(GPIOA, &GPIOInitStruct);
 
@@ -294,42 +295,80 @@ void InitDBG(void){
 }
 
 /*Input Capture for encoders*/
+void InitEncoder(){
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+
+	GPIO_InitTypeDef GPIOInitStruct;
+	GPIO_StructInit(&GPIOInitStruct);
+
+	GPIOInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIOInitStruct.GPIO_Pin= /*PIN_ENC_IDX_R | PIN_ENC_LSB_R | PIN_ENC_DIR_R |*/ PIN_ENC_LSB_L | PIN_ENC_DIR_L;
+
+	GPIO_Init(GPIOA, &GPIOInitStruct);
+
+	TIM_EncoderInterfaceConfig(TIM1, TIM_EncoderMode_TI1, TIM_ICPolarity_Rising, TIM_ICPolarity_Falling);
+	TIM_Cmd(TIM1, ENABLE);
+
+//	TIM_ARRPreloadConfig(TIM1, ENABLE);
+//	TIM_SetAutoreload(TIM1, 1024);
+}
+
 void InitTIM1(void){
 	RCC_APB1PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
 
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	TIM_ICInitTypeDef  TIM_ICInitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
+	//NVIC_InitTypeDef NVIC_InitStructure;
 
-	TIM_TimeBaseStructure.TIM_Prescaler =0 ;
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseStructure.TIM_Period = 64000-1; /* 1kHz */
-	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
+//	TIM_TimeBaseStructure.TIM_Prescaler =0 ;
+//	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+//	TIM_TimeBaseStructure.TIM_Period = 64000-1; /* 1kHz */
+//	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+//	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
 
-	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+//	TIM_TimeBaseStructure.TIM_Period = 1024;
+	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
 
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1 | TIM_Channel_2 | TIM_Channel_3 | TIM_Channel_4;
+	TIM_ICStructInit(&TIM_ICInitStructure);
+	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
 	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
 	TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
-	TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
-	TIM_ICInitStructure.TIM_ICFilter= 0x03;
-
+	TIM_ICInitStructure.TIM_ICFilter= 0x00;
 	TIM_ICInit(TIM1, &TIM_ICInitStructure);
+
+	TIM_ICStructInit(&TIM_ICInitStructure);
+	TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
+	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+	TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+	TIM_ICInitStructure.TIM_ICFilter= 0x00;
+	TIM_ICInit(TIM1, &TIM_ICInitStructure);
+
+//	TIM_ARRPreloadConfig(TIM1, ENABLE);
+
+	TIM_EncoderInterfaceConfig(TIM1, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
+
+//	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1 | TIM_Channel_2 | TIM_Channel_3 | TIM_Channel_4;
+//	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+//	TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+//	TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+//	TIM_ICInitStructure.TIM_ICFilter= 0x03;
+//	TIM_ICInit(TIM1, &TIM_ICInitStructure);
 
 	/*TIM1 counter enable*/
 	TIM_Cmd(TIM1, ENABLE);
 
 	/*configuring interrupt*/
-	TIM_ITConfig(TIM2,(TIM_IT_CC1 | TIM_IT_CC2 | TIM_IT_CC3 | TIM_IT_CC4),ENABLE);
+//	TIM_ITConfig(TIM2,(TIM_IT_CC1 | TIM_IT_CC2 | TIM_IT_CC3 | TIM_IT_CC4),ENABLE);
 
-	NVIC_InitStructure.NVIC_IRQChannel=TIM1_CC_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority=1;
-	NVIC_Init(&NVIC_InitStructure);
-
-
+//	NVIC_InitStructure.NVIC_IRQChannel=TIM1_CC_IRQn;
+//	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
+//	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0;
+//	NVIC_InitStructure.NVIC_IRQChannelSubPriority=1;
+//	NVIC_Init(&NVIC_InitStructure);
 }
 
 void InitTIM2(void){

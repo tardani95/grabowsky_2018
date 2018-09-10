@@ -162,8 +162,11 @@ void InitDBG(void);
 void InitADC(void);
 void InitEXTI(void);
 
+void InitEncoder(void);
+
 void InitTIM(void);
 void InitTIM1(void);
+
 void InitTIM2(void);
 void InitTIM4(void);
 

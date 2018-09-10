@@ -70,11 +70,20 @@ int main(void){
 #endif
 
 	/* configure SysTick for delay functions */
+//	InitSysTick();
+
+
+//	InitPeriph();
+//	InitNav();
+
 	InitSysTick();
+	InitRCC();
+//	InitGPIO();
+	InitEncoder();
 
+	uint16_t counter = 512;
+	TIM_SetCounter(TIM1, 16000);
 
-	InitPeriph();
-	InitNav();
 	/*
 		uint16_t ledPins[4]={	PIN_D_RS,
 									PIN_D_RF,
@@ -90,6 +99,7 @@ int main(void){
 
 	/* Infinite loop */
 	while (1){
+		counter = TIM1->CNT;
 
 	}
 }
