@@ -24,5 +24,10 @@ typedef struct{
 void InitNav(void);
 void InitCapture(capture* capStruct);
 
+void ENC_SetLeftValue(uint32_t value);
+void ENC_SetRightValue(uint32_t value);
+
+uint32_t ENC_GetLeftValue();
+uint32_t ENC_GetRightValue();
 
 #endif

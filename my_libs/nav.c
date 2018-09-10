@@ -2,7 +2,8 @@
 
 
 /*encoder input capture values*/
-
+uint32_t ENC_Left;
+uint32_t ENC_Right;
 
 /*encoder channels*/
 capture RA;
@@ -40,18 +41,44 @@ void GetClkFreq(void)
 	timer1_clk = clkConfStruct.PCLK2_Frequency/1000;/*kHz; if APB2 prescaler = 1!!!*/
 }
 
+void ENC_SetLeftValue(uint32_t value){
+	ENC_Left = value;
+}
+
+void ENC_SetRightValue(uint32_t value){
+	ENC_Right = value;
+}
+
+uint32_t ENC_GetLeftValue(){
+	return ENC_Left;
+}
+
+uint32_t ENC_GetRightValue(){
+	return ENC_Right;
+}
+
+
+
 float duty_start = 0; //MOT_PWM_MAX_DUTY/2;
 
 uint8_t dir_L = 0, dir_R = 0;
 uint8_t go = 0;/*for enabling/disabling control, global variable*/
 
 void EXTI9_5_IRQHandler(void){
-	/*interrupt request from button?*/
-	if (EXTI_PR_PR5){
-		EXTI_ClearITPendingBit(EXTI_Line5);
+	/* interrupt request from button ? */
+
+
+	/* interrupt request from encoderL ? */
+	if(SET == EXTI_GetITStatus(EXTI_Line8)){
+		EXTI->PR = EXTI_Line8;
+		ENC_Left++;
+		return;
+	}
+
+	if(SET == EXTI_GetITStatus(EXTI_Line5)){
+		EXTI->PR = EXTI_Line5;
 		/*do stuff when button pressed*/
 		/*start/stop motors*/
-
 		if(!go){
 			go = 1;
 			MotCtl(duty_start, MOT_R);
@@ -63,30 +90,14 @@ void EXTI9_5_IRQHandler(void){
 			go = 0;
 		}
 	}
-
-	/*interrupt request from encoderL DIR?*/
-	if(EXTI_PR_PR8){
-		EXTI_ClearITPendingBit(EXTI_Line8);
-		if(GPIO_ReadInputDataBit(PORT_ENC_DIR_L, PIN_ENC_DIR_L)){
-			dir_L = 1;/*to be determined*/
-		}
-		else {
-			dir_L = 0;
-		}
-	}
 }
 
 
 void EXTI15_10_IRQHandler(void){
-	/*interrupt request from encoderR DIR?*/
-	if(EXTI_PR_PR11){
-		EXTI_ClearITPendingBit(EXTI_Line11);
-		if(GPIO_ReadInputDataBit(PORT_ENC_DIR_R, PIN_ENC_DIR_R)){
-			dir_R = 1;/*to be determined*/
-		}
-		else {
-			dir_R = 0;
-		}
+	/* interrupt request from encoderR ? */
+	if(SET == EXTI_GetITStatus(EXTI_Line10)){
+		EXTI->PR = EXTI_Line10;
+		ENC_Right++;
 	}
 }
 

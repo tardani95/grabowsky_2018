@@ -59,9 +59,6 @@ void InitRCC(void){
 	RCC_MCOConfig(RCC_MCO_SYSCLK); /*output SYSCLK on PA8, GPIO_Pin_PA8 must be AFIO */
 #endif
 }
-
-
-
 void InitGPIO(void){
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -113,9 +110,11 @@ void InitGPIO(void){
 
 	/* GPIOB, inputs */
 	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIOInitStruct.GPIO_Pin= PIN_SW0 | PIN_ENC_IDX_L;
+	GPIOInitStruct.GPIO_Pin = PIN_ENC_IDX_L;
 
 	GPIO_Init(GPIOB, &GPIOInitStruct);
+
+
 
 	/* GPIOB, afio */
 	GPIOInitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -133,68 +132,10 @@ void InitGPIO(void){
 #endif
 
 }
-
-
-void InitEXTI(void){
-
-	EXTI_InitTypeDef EXTI_InitStructure;
-
-	/*button0*/
-	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB,GPIO_PinSource5);
-
-	EXTI_InitStructure.EXTI_Line=EXTI_Line5;
-	EXTI_InitStructure.EXTI_Mode=EXTI_Mode_Interrupt;
-	EXTI_InitStructure.EXTI_Trigger=EXTI_Trigger_Falling;
-	EXTI_InitStructure.EXTI_LineCmd=ENABLE;
-	EXTI_Init(&EXTI_InitStructure);
-
-	/*encoderL DIR*/
-	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource8);
-
-	EXTI_InitStructure.EXTI_Line=EXTI_Line8;
-	EXTI_InitStructure.EXTI_Mode=EXTI_Mode_Interrupt;
-	EXTI_InitStructure.EXTI_Trigger=EXTI_Trigger_Rising_Falling;
-	EXTI_InitStructure.EXTI_LineCmd=ENABLE;
-	EXTI_Init(&EXTI_InitStructure);
-
-	/*encoderR DIR*/
-	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource11);
-
-	EXTI_InitStructure.EXTI_Line=EXTI_Line11;
-	EXTI_InitStructure.EXTI_Mode=EXTI_Mode_Interrupt;
-	EXTI_InitStructure.EXTI_Trigger=EXTI_Trigger_Rising_Falling;
-	EXTI_InitStructure.EXTI_LineCmd=ENABLE;
-	EXTI_Init(&EXTI_InitStructure);
-
-	/*nvic*/
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
-	NVIC_InitTypeDef nvicStructure;
-
-	/*button0+encL_DIR nvic*/
-	nvicStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
-	nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	nvicStructure.NVIC_IRQChannelSubPriority = 0;
-	nvicStructure.NVIC_IRQChannelCmd = ENABLE;
-
-	NVIC_Init(&nvicStructure);
-
-	/*encR_DIR nvic*/
-	nvicStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
-	nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	nvicStructure.NVIC_IRQChannelSubPriority = 0;
-	nvicStructure.NVIC_IRQChannelCmd = ENABLE;
-
-	NVIC_Init(&nvicStructure);
-}
-
 void InitTIM(void){
-	InitTIM1();
 	InitTIM2();
 	InitTIM4();
 }
-
-
-
 void InitADC(void){
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
@@ -251,53 +192,51 @@ void InitADC(void){
 	/* Check the end of ADC1 calibration */
 	while(ADC_GetCalibrationStatus(ADC1));
 }
-
-
-
-
-uint16_t ledPins[4]={	PIN_D_RS,
-							PIN_D_LF,
-							PIN_D_RF,
-							PIN_D_LS};
-
-GPIO_TypeDef* ledPorts[4]={PORT_D_RS,
-					PORT_D_LF,
-					PORT_D_RF,
-					PORT_D_LS};
-
-uint16_t adcBuf[4]={0};
-
-void readADC(void){
-
-	for(uint8_t i=0;i<4;i++){
-
-		GPIO_SetBits(ledPorts[i], ledPins[i]);
-
-		ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-
-		while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);   /* Wait until conversion completion */
-
-		GPIO_ResetBits(ledPorts[i], ledPins[i]);
-
-
-		adcBuf[i]=ADC1->DR;
-
-
-	}
-}
-
-
-
-
 void InitDBG(void){
 
 
 }
 
-/*Input Capture for encoders*/
+/*init button*/
+void InitButton0(){
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+
+	GPIO_InitTypeDef GPIOInitStruct;
+	GPIO_StructInit(&GPIOInitStruct);
+	GPIOInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IPU;
+	GPIOInitStruct.GPIO_Pin = PIN_SW0;
+	GPIO_Init(GPIOB, &GPIOInitStruct);
+
+	EXTI_InitTypeDef EXTI_InitStructure;
+
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource5);
+	EXTI_InitStructure.EXTI_Line = EXTI_Line5;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
+
+	/*nvic*/
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
+	NVIC_InitTypeDef nvicStructure;
+
+	/*button0+encL_DIR nvic*/
+	nvicStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
+	nvicStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	nvicStructure.NVIC_IRQChannelSubPriority = 0;
+	nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+
+	NVIC_Init(&nvicStructure);
+}
+
+/*rising falling edge detection for encoders*/
 void InitEncoder(){
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
 	GPIO_InitTypeDef GPIOInitStruct;
@@ -305,70 +244,54 @@ void InitEncoder(){
 
 	GPIOInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIOInitStruct.GPIO_Pin= /*PIN_ENC_IDX_R | PIN_ENC_LSB_R | PIN_ENC_DIR_R |*/ PIN_ENC_LSB_L | PIN_ENC_DIR_L;
+	GPIOInitStruct.GPIO_Pin= PIN_ENC_IDX_R | PIN_ENC_LSB_R | PIN_ENC_DIR_R | PIN_ENC_LSB_L | PIN_ENC_DIR_L;
 
 	GPIO_Init(GPIOA, &GPIOInitStruct);
 
-	TIM_EncoderInterfaceConfig(TIM1, TIM_EncoderMode_TI1, TIM_ICPolarity_Rising, TIM_ICPolarity_Falling);
-	TIM_Cmd(TIM1, ENABLE);
+	/* GPIOB, inputs */
+	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIOInitStruct.GPIO_Pin= PIN_ENC_IDX_L;
 
-//	TIM_ARRPreloadConfig(TIM1, ENABLE);
-//	TIM_SetAutoreload(TIM1, 1024);
-}
+	GPIO_Init(GPIOB, &GPIOInitStruct);
 
-void InitTIM1(void){
-	RCC_APB1PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
 
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-	TIM_ICInitTypeDef  TIM_ICInitStructure;
-	//NVIC_InitTypeDef NVIC_InitStructure;
 
-//	TIM_TimeBaseStructure.TIM_Prescaler =0 ;
-//	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-//	TIM_TimeBaseStructure.TIM_Period = 64000-1; /* 1kHz */
-//	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-//	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
+	EXTI_InitTypeDef EXTI_InitStructure;
 
-	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
-//	TIM_TimeBaseStructure.TIM_Period = 1024;
-	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
+	/*encoderL DIR*/
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource8);
+	EXTI_InitStructure.EXTI_Line=EXTI_Line8;
+	EXTI_InitStructure.EXTI_Mode=EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger=EXTI_Trigger_Rising_Falling;
+	EXTI_InitStructure.EXTI_LineCmd=ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
 
-	TIM_ICStructInit(&TIM_ICInitStructure);
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
-	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
-	TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
-	TIM_ICInitStructure.TIM_ICFilter= 0x00;
-	TIM_ICInit(TIM1, &TIM_ICInitStructure);
+	/*encoderR DIR*/
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource10);
+	EXTI_InitStructure.EXTI_Line = EXTI_Line10;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
 
-	TIM_ICStructInit(&TIM_ICInitStructure);
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
-	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
-	TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
-	TIM_ICInitStructure.TIM_ICFilter= 0x00;
-	TIM_ICInit(TIM1, &TIM_ICInitStructure);
+	/*nvic*/
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
+	NVIC_InitTypeDef nvicStructure;
 
-//	TIM_ARRPreloadConfig(TIM1, ENABLE);
+	/*button0+encL_DIR nvic*/
+	nvicStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
+	nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	nvicStructure.NVIC_IRQChannelSubPriority = 0;
+	nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&nvicStructure);
 
-	TIM_EncoderInterfaceConfig(TIM1, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
+	/*encR_LSB nvic*/
+	nvicStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
+	nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	nvicStructure.NVIC_IRQChannelSubPriority = 0;
+	nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&nvicStructure);
 
-//	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1 | TIM_Channel_2 | TIM_Channel_3 | TIM_Channel_4;
-//	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
-//	TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
-//	TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
-//	TIM_ICInitStructure.TIM_ICFilter= 0x03;
-//	TIM_ICInit(TIM1, &TIM_ICInitStructure);
-
-	/*TIM1 counter enable*/
-	TIM_Cmd(TIM1, ENABLE);
-
-	/*configuring interrupt*/
-//	TIM_ITConfig(TIM2,(TIM_IT_CC1 | TIM_IT_CC2 | TIM_IT_CC3 | TIM_IT_CC4),ENABLE);
-
-//	NVIC_InitStructure.NVIC_IRQChannel=TIM1_CC_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
-//	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0;
-//	NVIC_InitStructure.NVIC_IRQChannelSubPriority=1;
-//	NVIC_Init(&NVIC_InitStructure);
 }
 
 void InitTIM2(void){
@@ -471,5 +394,36 @@ void MotCtl(float duty,uint8_t side){
 	}
 }
 
+
+uint16_t ledPins[4]={	PIN_D_RS,
+							PIN_D_LF,
+							PIN_D_RF,
+							PIN_D_LS};
+
+GPIO_TypeDef* ledPorts[4]={PORT_D_RS,
+					PORT_D_LF,
+					PORT_D_RF,
+					PORT_D_LS};
+
+uint16_t adcBuf[4]={0};
+
+void readADC(void){
+
+	for(uint8_t i=0;i<4;i++){
+
+		GPIO_SetBits(ledPorts[i], ledPins[i]);
+
+		ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+
+		while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);   /* Wait until conversion completion */
+
+		GPIO_ResetBits(ledPorts[i], ledPins[i]);
+
+
+		adcBuf[i]=ADC1->DR;
+
+
+	}
+}
 
 

@@ -81,8 +81,8 @@ int main(void){
 //	InitGPIO();
 	InitEncoder();
 
-	uint16_t counter = 512;
-	TIM_SetCounter(TIM1, 16000);
+	uint32_t counterL = 512;
+	uint32_t counterR = 512;
 
 	/*
 		uint16_t ledPins[4]={	PIN_D_RS,
@@ -99,8 +99,8 @@ int main(void){
 
 	/* Infinite loop */
 	while (1){
-		counter = TIM1->CNT;
-
+		counterL = ENC_GetLeftValue();
+		counterR = ENC_GetRightValue();
 	}
 }
 
