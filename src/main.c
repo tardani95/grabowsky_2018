@@ -80,6 +80,7 @@ int main(void){
 	InitRCC();
 //	InitGPIO();
 	InitEncoder();
+	InitButton0();
 
 	uint32_t counterL = 512;
 	uint32_t counterR = 512;
