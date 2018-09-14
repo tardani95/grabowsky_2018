@@ -30,7 +30,13 @@ Info        : 14-09-2018
 /*==========================================================================*/
 /*                            Private variables								*/
 /*==========================================================================*/
+/* for emulated eeprom */
+ErrorStatus  HSEStartUpStatus;
+FLASH_Status FlashStatus;
+uint16_t VarValue2 = 0;
 
+/* Virtual address defined by the user: 0xFFFF value is prohibited */
+uint16_t VirtAddVarTab2[3] = {0x5555, 0x6666, 0x7777};
 
 /*==========================================================================*/
 /*                      Private function prototypes							*/
@@ -41,21 +47,32 @@ Info        : 14-09-2018
 /*                          Private functions								*/
 /*==========================================================================*/
 
-/*
-void WriteFlash(void)
-{
+void WriteFlash(void){
+	/* Unlock the Flash Program Erase controller */
 	FLASH_Unlock();
-	FLASH_ClearFlag( FLASH_FLAG_EOP | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR |
-	FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
-	FLASH_EraseSector(FLASH_Sector_11, VoltageRange_3);
-	unsigned int i;
-	for(i = 0; i<33; i++) {
-		FLASH_ProgramWord(StartAddress + i*8, MazeWalls[i][0]);
-		FLASH_ProgramWord(StartAddress + i*8 + 4, MazeWalls[i][1]);
+
+	/* --- Store successively many values of the three variables in the EEPROM ---*/
+	/* Store 1000 values of Variable1 in EEPROM */
+	for (VarValue2 = 0; VarValue2 < 1000; VarValue2++)
+	{
+	EE_WriteVariable(VirtAddVarTab2[0], VarValue2);
 	}
-	FLASH_ProgramWord(StartAddress + 34*8, 0);
+
+	/* Store 500 values of Variable2 in EEPROM */
+	for (VarValue2 = 0; VarValue2 < 500; VarValue2++)
+	{
+	EE_WriteVariable(VirtAddVarTab2[1], VarValue2);
+	}
+
+	/* Store 800 values of Variable3 in EEPROM */
+	for (VarValue2 = 0; VarValue2 < 800; VarValue2++)
+	{
+	EE_WriteVariable(VirtAddVarTab2[2], VarValue2);
+	}
+
 	FLASH_Lock();
 }
+/*
 void ReadFlash(void)
 {
 	unsigned int i;

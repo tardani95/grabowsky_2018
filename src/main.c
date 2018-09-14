@@ -1,10 +1,10 @@
 /******************************************************************************
 File        : main.c
 Author      : Daniel Tar
-Version     : 0.2
+Version     : 0.3
 Copyright   :
 Description :
-Info        : 07-09-2018
+Info        : 14-09-2018
 ******************************************************************************/
 
 /*==========================================================================*/
@@ -19,6 +19,7 @@ Info        : 07-09-2018
 #include "util.h"
 #include "control.h"
 #include "nav.h"
+#include "maze.h"
 
 /*==========================================================================*/
 /*                            Private typedef								*/
@@ -63,6 +64,7 @@ Info        : 07-09-2018
 /*==========================================================================*/
 int main(void){
 
+	/* Setup STM32 system (clock, PLL and Flash configuration) */
 	SystemInit();
 
 #ifdef DEBUG
@@ -76,32 +78,27 @@ int main(void){
 //	InitPeriph();
 //	InitNav();
 
+	/* configure SysTick for delay functions */
 	InitSysTick();
 	InitRCC();
 //	InitGPIO();
 	InitEncoder();
 	InitButton0();
 
-	uint32_t counterL = 512;
-	uint32_t counterR = 512;
 
-	/*
-		uint16_t ledPins[4]={	PIN_D_RS,
-									PIN_D_RF,
-									PIN_D_LF,
-									PIN_D_LS};
-		GPIO_TypeDef* ledPorts[4]={PORT_D_RS,
-									PORT_D_RF,
-									PORT_D_LF,
-									PORT_D_LS};
-	*/
+
+	/* Unlock the Flash Program Erase controller */
+	FLASH_Unlock();
+	/* EEPROM Init */
+	EE_Init();
+	/* Lock the Flash Program Erase controller */
+	FLASH_Lock();
+
 
 	/* TODO - Add your application code here */
 
 	/* Infinite loop */
 	while (1){
-		counterL = ENC_GetLeftValue();
-		counterR = ENC_GetRightValue();
 	}
 }
 

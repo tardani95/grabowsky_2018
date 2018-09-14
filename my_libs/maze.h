@@ -16,9 +16,8 @@ Info        : 14-09-2018
 #include <math.h>
 #include "conf.h"
 #include "util.h"
+#include "eeprom.h"
 
-#include "stm32f10x.h"
-#include "stm32f10x_flash.h"
 
 /*==========================================================================*/
 /*                            Private typedef								*/
@@ -39,7 +38,8 @@ Info        : 14-09-2018
 /*                            Private variables								*/
 /*==========================================================================*/
 
-uint32_t FLASH_startAddress = 0x08000000;
+
+
 
 /* mazeWalls arrays description
  *
