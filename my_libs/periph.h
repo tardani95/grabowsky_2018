@@ -163,6 +163,7 @@ void InitADC(void);
 void InitEXTI(void);
 
 void InitEncoder(void);
+void InitButton0(void);
 
 void InitTIM(void);
 void InitTIM1(void);
@@ -176,3 +177,64 @@ void MotCtl(float duty,uint8_t side);
 
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
