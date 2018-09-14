@@ -30,11 +30,8 @@ Info        : 14-09-2018
 /*==========================================================================*/
 /*                            Private variables								*/
 /*==========================================================================*/
-/* for emulated eeprom */
-ErrorStatus  HSEStartUpStatus;
-FLASH_Status FlashStatus;
-uint16_t VarValue2 = 0;
 
+uint16_t VarValue2 = 0;
 /* Virtual address defined by the user: 0xFFFF value is prohibited */
 uint16_t VirtAddVarTab2[3] = {0x5555, 0x6666, 0x7777};
 
@@ -47,7 +44,19 @@ uint16_t VirtAddVarTab2[3] = {0x5555, 0x6666, 0x7777};
 /*                          Private functions								*/
 /*==========================================================================*/
 
-void WriteFlash(void){
+void Init_EEPROM(){
+	/* Unlock the Flash Program Erase controller */
+	FLASH_Unlock();
+	/* EEPROM Init */
+	EE_Init();
+	/* Lock the Flash Program Erase controller */
+	FLASH_Lock();
+}
+
+void saveMaze(){
+
+	/* TODO - implement saveMaze */
+
 	/* Unlock the Flash Program Erase controller */
 	FLASH_Unlock();
 
@@ -72,30 +81,30 @@ void WriteFlash(void){
 
 	FLASH_Lock();
 }
-/*
-void ReadFlash(void)
-{
+
+void loadMaze(){
+
+	/* TODO - implement loadMaze */
+
+	uint16_t retVal = 0;
+	uint16_t status = -2;
+	status = EE_ReadVariable(0x0000, &retVal);
+	/*
 	unsigned int i;
 	for(i=0; i<33; i++) {
 		MazeWalls[i][0] = *(uint32_t *)(StartAddress + i*8);
 		MazeWalls[i][1] = *(uint32_t *)(StartAddress + i*8 + 4);
-	}
+	}*/
 }
-void ClearFlash(void)
-{
+
+void clearMaze(void){
 	FLASH_Unlock();//unlock flash writing
-	FLASH_ClearFlag( FLASH_FLAG_EOP | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR |
-	FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
-	FLASH_EraseSector(FLASH_Sector_11, VoltageRange_3);
-	unsigned int i;
-	for(i = 0; i<33; i++) {
-		FLASH_ProgramWord(StartAddress + i*8, 0);
-		FLASH_ProgramWord(StartAddress + i*8 + 4, 0);
-	}
-	FLASH_ProgramWord(StartAddress + 34*8, 1);
+
+	/* TODO - implement clearMaze */
+
 	FLASH_Lock();//lock the flash for writing}
 }
-*/
+
 void addWall(uint8_t x, uint8_t y, int8_t wall_type){
 	switch (wall_type) {
 		case 0:

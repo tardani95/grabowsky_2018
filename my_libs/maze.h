@@ -39,8 +39,6 @@ Info        : 14-09-2018
 /*==========================================================================*/
 
 
-
-
 /* mazeWalls arrays description
  *
  *  the mazeWalls array stores the information from the walls in a very complex way, to
