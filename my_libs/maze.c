@@ -133,16 +133,16 @@ void clearMaze(void){
 void addWall(uint8_t x, uint8_t y, int8_t wall_type){
 	switch (wall_type) {
 		case 0:
-			mazeWalls[1][x] |= 1 << y;
+			mazeWalls[1][x] |= (1 << y);
 			break;
 		case 1:
-			mazeWalls[0][y] |= 1 << x;
+			mazeWalls[0][y] |= (1 << x);
 			break;
 		case 2:
-			mazeWalls[1][x+1] |= 1 << y;
+			mazeWalls[1][x+1] |= (1 << y);
 			break;
 		case 3:
-			mazeWalls[0][y+1] |= 1 << x;
+			mazeWalls[0][y+1] |= (1 << x);
 			break;
 	}
 }
@@ -150,13 +150,13 @@ void addWall(uint8_t x, uint8_t y, int8_t wall_type){
 int8_t getWall(uint8_t x, uint8_t y, int8_t wall_type){
 	switch (wall_type) {
 		case 0:
-			return ( mazeWalls[1][x] >> y ) & 0x01;
+			return (( mazeWalls[1][x] >> y ) & 0x01 );
 		case 1:
-			return ( mazeWalls[0][y] >> x ) & 0x01;
+			return (( mazeWalls[0][y] >> x ) & 0x01 );
 		case 2:
-			return ( mazeWalls[1][x+1] >> y ) & 0x01;
+			return (( mazeWalls[1][x+1] >> y ) & 0x01 );
 		case 3:
-			return ( mazeWalls[0][y+1] >> x ) & 0x01;
+			return (( mazeWalls[0][y+1] >> x ) & 0x01 );
 	}
 	return -1;
 }
