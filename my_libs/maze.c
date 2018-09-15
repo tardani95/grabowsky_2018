@@ -35,6 +35,22 @@ uint16_t VarValue2 = 0;
 /* Virtual address defined by the user: 0xFFFF value is prohibited */
 uint16_t VirtAddVarTab2[3] = {0x5555, 0x6666, 0x7777};
 
+/* mazeWalls arrays description
+ *
+ *  the mazeWalls array stores the information from the walls in a very complex way, to
+ *  minimalize the flash memory costs
+ *
+ *  there are two types of walls, horizontal and vertical
+ *  the second index shows which kind of wall it is:
+ *  	0 - horizontal
+ *  	1 - vertical
+ *
+ *  both from vertical and horizontal walls are 32 pieces and if there is a wall
+ *  then the uint32's bit is set to 1
+ *
+ */
+uint32_t mazeWalls[DIR_SIZE][MAZE_SIZE];
+
 /*==========================================================================*/
 /*                      Private function prototypes							*/
 /*==========================================================================*/
@@ -55,46 +71,48 @@ void Init_EEPROM(){
 
 void saveMaze(){
 
-	/* TODO - implement saveMaze */
-
 	/* Unlock the Flash Program Erase controller */
 	FLASH_Unlock();
 
-	/* --- Store successively many values of the three variables in the EEPROM ---*/
-	/* Store 1000 values of Variable1 in EEPROM */
-	for (VarValue2 = 0; VarValue2 < 1000; VarValue2++)
-	{
-	EE_WriteVariable(VirtAddVarTab2[0], VarValue2);
-	}
+	uint16_t tempValue = 0x0000;
 
-	/* Store 500 values of Variable2 in EEPROM */
-	for (VarValue2 = 0; VarValue2 < 500; VarValue2++)
-	{
-	EE_WriteVariable(VirtAddVarTab2[1], VarValue2);
-	}
+	for(uint16_t dir = 0; dir < DIR_SIZE; ++dir){
+		for(uint16_t cell; cell < MAZE_SIZE; ++cell){
+			/* write MSB half of the uint32_t variable to the eeprom */
+			tempValue = (( mazeWalls[dir][cell] & 0xFFFF0000) >> 16);
+			EE_WriteVariable( dir*cell*2 , tempValue);
 
-	/* Store 800 values of Variable3 in EEPROM */
-	for (VarValue2 = 0; VarValue2 < 800; VarValue2++)
-	{
-	EE_WriteVariable(VirtAddVarTab2[2], VarValue2);
+			/* write LSB half of the uint32_t variable to the eeprom */
+			tempValue = ( mazeWalls[dir][cell] & 0x0000FFFF);
+			EE_WriteVariable( dir*cell*2 + 1, tempValue);
+		}
 	}
 
 	FLASH_Lock();
 }
 
-void loadMaze(){
+/* returns 0 if all data read successfully */
+uint16_t loadMaze(){
 
 	/* TODO - implement loadMaze */
 
-	uint16_t retVal = 0;
-	uint16_t status = -2;
-	status = EE_ReadVariable(0x0000, &retVal);
-	/*
-	unsigned int i;
-	for(i=0; i<33; i++) {
-		MazeWalls[i][0] = *(uint32_t *)(StartAddress + i*8);
-		MazeWalls[i][1] = *(uint32_t *)(StartAddress + i*8 + 4);
-	}*/
+	uint16_t readValue = 0;
+	uint16_t failCounter = 0;
+
+
+	for(uint16_t dir = 0; dir < DIR_SIZE; ++dir){
+		for(uint16_t cell; cell < MAZE_SIZE; ++cell){
+
+			/* read MSB half of the uint32_t variable to the eeprom */
+			failCounter += EE_ReadVariable( dir*cell*2 , &readValue);
+			mazeWalls[dir][cell] |= (uint32_t)readValue << 16;
+
+			/* read LSB half of the uint32_t variable to the eeprom */
+			failCounter += EE_ReadVariable( dir*cell*2 + 1 , &readValue);
+			mazeWalls[dir][cell] |= (uint32_t)readValue;
+		}
+	}
+	return failCounter; /* returns 0 if all data read successfully */
 }
 
 void clearMaze(void){

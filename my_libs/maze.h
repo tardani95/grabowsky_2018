@@ -27,33 +27,18 @@ Info        : 14-09-2018
 /*==========================================================================*/
 /*                            Private define								*/
 /*==========================================================================*/
-
+#define DIR_SIZE 					2
+#define MAZE_SIZE 					32
+#define MAZE_VIRT_ADD				0x0000
+#define MAZE_DATA_SIZE_IN_UINT16 	(2 * DIR_SIZE * MAZE_SIZE)
 
 /*==========================================================================*/
 /*                            Private macro									*/
 /*==========================================================================*/
 
-
 /*==========================================================================*/
 /*                            Private variables								*/
 /*==========================================================================*/
-
-
-/* mazeWalls arrays description
- *
- *  the mazeWalls array stores the information from the walls in a very complex way, to
- *  minimalize the flash memory costs
- *
- *  there are two types of walls, horizontal and vertical
- *  the second index shows which kind of wall it is:
- *  	0 - horizontal
- *  	1 - vertical
- *
- *  both from vertical and horizontal walls are 32 pieces and if there is a wall
- *  then the uint32's bit is set to 1
- *
- */
-uint32_t mazeWalls[2][32];
 
 /*==========================================================================*/
 /*                      Private function prototypes							*/
