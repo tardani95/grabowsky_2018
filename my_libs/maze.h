@@ -43,9 +43,9 @@ Info        : 14-09-2018
 /*==========================================================================*/
 /*                      Private function prototypes							*/
 /*==========================================================================*/
-void writeFlash(void);
-void readFlash(void);
-void clearFlash(void);
+void Init_EEPROM(void);
+uint16_t saveMaze(void);
+uint16_t loadMaze(void);
 
 void addWall(uint8_t x, uint8_t y, int8_t wall_type);
 int8_t getWall(uint8_t x, uint8_t y, int8_t wall_type);
