@@ -69,6 +69,13 @@ void Init_EEPROM(){
 	FLASH_Lock();
 }
 
+void Init_Maze(){
+	mazeWalls[0][0] = 0xffffffff;
+	mazeWalls[1][0] = 0xffffffff;
+	mazeWalls[0][MAZE_SIZE-1] = 0xffffffff;
+	mazeWalls[1][MAZE_SIZE-1] = 0xffffffff;
+}
+
 /* returns 0 if all data are written successfully */
 uint16_t saveMaze(){
 	/* Unlock the Flash Program Erase controller */
@@ -122,13 +129,7 @@ uint16_t loadMaze(){
 	return failCounter; /* returns 0 if all data read successfully */
 }
 
-void clearMaze(void){
-	FLASH_Unlock();//unlock flash writing
 
-	/* TODO - implement clearMaze */
-
-	FLASH_Lock();//lock the flash for writing}
-}
 
 void addWall(uint8_t x, uint8_t y, int8_t wall_type){
 	switch (wall_type) {
