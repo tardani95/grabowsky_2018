@@ -18,6 +18,7 @@ Info        : 07.09.2018
 #include <math.h>
 #include "conf.h"
 #include "util.h"
+#include "mpu6050.h"
 
 #include "stm32f10x.h"
 #include "stm32f10x_rcc.h" /* Reset & Clock Control */
@@ -27,6 +28,7 @@ Info        : 07.09.2018
 #include "stm32f10x_exti.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_dma.h"
+
 
 /* High level functions for NVIC and SysTick (add-on to CMSIS functions)
  * NVIC - Nested Vector Interrupt Controller
@@ -121,7 +123,7 @@ Info        : 07.09.2018
 #define MPU6050_I2C_SDA_Pin		GPIO_Pin_11
 #define MPU6050_I2C_Port		GPIOB
 
-#define MPU6050_I2C_Speed		400000
+#define MPU6050_I2C_Speed		115200
 #define MPU6050_I2C				I2C2
 
 /* usart pins */
@@ -175,6 +177,8 @@ void InitEXTI(void);
 
 void InitEncoder(void);
 void InitButton0(void);
+
+uint8_t Init_MPU6050(void);
 
 void InitTIM(void);
 void InitTIM1(void);

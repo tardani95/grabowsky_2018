@@ -306,7 +306,7 @@ extern "C" {
 #define MPU6050_INTERRUPT_DMP_INT_BIT       1
 #define MPU6050_INTERRUPT_DATA_RDY_BIT      0
 
-// TODO: Need to work on DMP related things
+// TODO - Need to work on DMP related things
 #define MPU6050_DMPINT_5_BIT            5
 #define MPU6050_DMPINT_4_BIT            4
 #define MPU6050_DMPINT_3_BIT            3
@@ -394,6 +394,8 @@ extern "C" {
 #define MPU6050_DMP_MEMORY_BANKS        8
 #define MPU6050_DMP_MEMORY_BANK_SIZE    256
 #define MPU6050_DMP_MEMORY_CHUNK_SIZE   16
+
+
 
 void MPU6050_Initialize();
 uint8_t MPU6050_TestConnection();

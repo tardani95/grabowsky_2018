@@ -1,6 +1,7 @@
 #include "periph.h"
 
 
+
 /* init every peripheral used,  */
 void InitPeriph(void){
 	InitRCC();
@@ -197,40 +198,7 @@ void InitDBG(void){
 
 }
 
-/*init button*/
-void InitButton0(){
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-
-	GPIO_InitTypeDef GPIOInitStruct;
-	GPIO_StructInit(&GPIOInitStruct);
-	GPIOInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IPU;
-	GPIOInitStruct.GPIO_Pin = PIN_SW0;
-	GPIO_Init(GPIOB, &GPIOInitStruct);
-
-	EXTI_InitTypeDef EXTI_InitStructure;
-
-	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource5);
-	EXTI_InitStructure.EXTI_Line = EXTI_Line5;
-	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
-	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-	EXTI_Init(&EXTI_InitStructure);
-
-	/*nvic*/
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
-	NVIC_InitTypeDef nvicStructure;
-
-	/*button0+encL_DIR nvic*/
-	nvicStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
-	nvicStructure.NVIC_IRQChannelPreemptionPriority = 1;
-	nvicStructure.NVIC_IRQChannelSubPriority = 0;
-	nvicStructure.NVIC_IRQChannelCmd = ENABLE;
-
-	NVIC_Init(&nvicStructure);
-}
 
 /*rising falling edge detection for encoders*/
 void InitEncoder(){
@@ -294,8 +262,51 @@ void InitEncoder(){
 
 }
 
+/*init button*/
+void InitButton0(){
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+
+	GPIO_InitTypeDef GPIOInitStruct;
+	GPIO_StructInit(&GPIOInitStruct);
+	GPIOInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IPU;
+	GPIOInitStruct.GPIO_Pin = PIN_SW0;
+	GPIO_Init(GPIOB, &GPIOInitStruct);
+
+	EXTI_InitTypeDef EXTI_InitStructure;
+
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource5);
+	EXTI_InitStructure.EXTI_Line = EXTI_Line5;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
+
+	/*nvic*/
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
+	NVIC_InitTypeDef nvicStructure;
+
+	/*button0+encL_DIR nvic*/
+	nvicStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
+	nvicStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	nvicStructure.NVIC_IRQChannelSubPriority = 0;
+	nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+
+	NVIC_Init(&nvicStructure);
+}
+
+/* init mpu6050*/
+uint8_t Init_MPU6050(){
+
+	MPU6050_I2C_Init();
+	MPU6050_Initialize();
+	return MPU6050_TestConnection(); /* returns 0 if it is working */
+}
+
 /*init mpu6050*/
-void InitMPU6050(){
+/*void InitMPU6050(){
 
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -343,7 +354,7 @@ void InitMPU6050(){
 	I2C_ITConfig(I2C2, I2C_IT_ERR, ENABLE);
 
 	I2C_Cmd(I2C2, ENABLE);
-}
+}*/
 
 void InitTIM2(void){
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
