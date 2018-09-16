@@ -55,7 +55,7 @@ void MPU6050_Initialize()
  * Make sure the device is connected and responds as expected.
  * @return True if connection is valid, FALSE otherwise
  */
-bool MPU6050_TestConnection()
+uint8_t MPU6050_TestConnection()
 {
     return MPU6050_GetDeviceID() == 0x34 ? TRUE : FALSE; //0b110100; 8-bit representation in hex = 0x34
 }
@@ -193,7 +193,7 @@ void MPU6050_SetFullScaleAccelRange(uint8_t range)
  * @see MPU6050_RA_PWR_MGMT_1
  * @see MPU6050_PWR1_SLEEP_BIT
  */
-bool MPU6050_GetSleepModeStatus()
+uint8_t MPU6050_GetSleepModeStatus()
 {
     uint8_t tmp;
     MPU6050_ReadBit(MPU6050_DEFAULT_ADDRESS, MPU6050_RA_PWR_MGMT_1, MPU6050_PWR1_SLEEP_BIT, &tmp);
@@ -311,12 +311,15 @@ void MPU6050_ReadBit(uint8_t slaveAddr, uint8_t regAddr, uint8_t bitNum, uint8_t
  * @param  None
  * @return None
  */
-void MPU6050_I2C_Init()
-{
+void MPU6050_I2C_Init(){
+
+	GPIO_InitTypeDef GPIO_InitStructure;
     I2C_InitTypeDef I2C_InitStructure;
-    GPIO_InitTypeDef GPIO_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
+	DMA_InitTypeDef DMA_InitStructure;
 
     /* Enable I2C and GPIO clocks */
+//    RCC_AHBPeriphClockCmd(MPU6050_I2C_RCC_DMA, ENABLE);
     RCC_APB1PeriphClockCmd(MPU6050_I2C_RCC_Periph, ENABLE);
     RCC_APB2PeriphClockCmd(MPU6050_I2C_RCC_Port, ENABLE);
 
@@ -327,17 +330,72 @@ void MPU6050_I2C_Init()
     GPIO_Init(MPU6050_I2C_Port, &GPIO_InitStructure);
 
     /* I2C configuration */
-    I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
-    I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
-    I2C_InitStructure.I2C_OwnAddress1 = MPU6050_DEFAULT_ADDRESS; // MPU6050 7-bit adress = 0x68, 8-bit adress = 0xD0;
+    I2C_DeInit(MPU6050_I2C);
     I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
     I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-    I2C_InitStructure.I2C_ClockSpeed = MPU6050_I2C_Speed;
-
-    /* Apply I2C configuration after enabling it */
+	I2C_InitStructure.I2C_ClockSpeed = MPU6050_I2C_Speed;
+    I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+    I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+    I2C_InitStructure.I2C_OwnAddress1 = 0; // MPU6050_DEFAULT_ADDRESS; // MPU6050 7-bit adress = 0x68, 8-bit adress = 0xD0;
     I2C_Init(MPU6050_I2C, &I2C_InitStructure);
+
+//    I2C_ITConfig(I2C2, I2C_IT_EVT, ENABLE);
+//	I2C_ITConfig(I2C2, I2C_IT_ERR, ENABLE);
+
     /* I2C Peripheral Enable */
     I2C_Cmd(MPU6050_I2C, ENABLE);
+
+    /*
+	I2C_DMACmd(I2C2, ENABLE);
+
+	NVIC_InitStructure.NVIC_IRQChannel = I2C2_EV_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+	NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+	// DMA Channel 4 - I2C2 TX
+	DMA_InitStructure.DMA_BufferSize = 0;
+	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t) i2cTxBuffer;
+	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) & I2C2->DR;
+	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+	DMA_Init(DMA1_Channel4, &DMA_InitStructure);
+
+	// DMA Channel 5 - I2C2 RX
+	DMA_InitStructure.DMA_BufferSize = 0;
+	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t) i2cRxBuffer;
+	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) & I2C2->DR;
+	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+	DMA_Init(DMA1_Channel5, &DMA_InitStructure);
+
+	DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
+
+	NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel5_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	*/
 }
 
 /**
