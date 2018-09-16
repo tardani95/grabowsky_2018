@@ -26,7 +26,7 @@ Info        : 07-09-2018
 //extern __IO uint32_t SysTickCnt; /* make this available in all files that include periph */
 
 void SysTick_Handler(void);
-void InitSysTick(void);
+void Init_SysTick(void);
 uint32_t GetSysTickCount(void);
 uint32_t Millis(void);
 void DelayUs(uint32_t us);

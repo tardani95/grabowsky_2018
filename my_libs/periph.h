@@ -168,8 +168,7 @@ extern uint8_t go;
 /* init functions */
 void InitPeriph(void);
 
-void InitRCC(void);
-void InitSysTick(void);
+void Init_RCC(void);
 void InitGPIO(void);
 void InitDBG(void);
 void InitADC(void);

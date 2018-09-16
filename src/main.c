@@ -79,8 +79,8 @@ int main(void){
 //	InitNav();
 
 	/* configure SysTick for delay functions */
-	InitSysTick();
-	InitRCC();
+	Init_SysTick();
+	Init_RCC();
 //	InitGPIO();
 	InitEncoder();
 	InitButton0();

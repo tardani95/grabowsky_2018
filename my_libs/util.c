@@ -45,11 +45,12 @@ void SysTick_Handler(void){
 
 /**
   * @brief  increment SysTick counter, useful for delay functions
-  *         with systick f=1MHz, it overflows every 1.19 hours
+  *         with systick f=1kHz, it overflows every 1.19*1000 hours
   * @param  None
   * @retval None
   */
-void InitSysTick(void){
+void Init_SysTick(void){
+
 	RCC_ClocksTypeDef RCC_ClockStruct;
 	RCC_GetClocksFreq(&RCC_ClockStruct);
 

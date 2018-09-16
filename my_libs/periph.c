@@ -1,11 +1,10 @@
 #include "periph.h"
 
-
-
 /* init every peripheral used,  */
 void InitPeriph(void){
-	InitRCC();
-	InitSysTick();
+
+	Init_RCC();
+	Init_SysTick();
 
 	InitGPIO();
 
@@ -23,7 +22,7 @@ void InitPeriph(void){
 }
 
 
-void InitRCC(void){
+void Init_RCC(void){
 
 	RCC_DeInit();
 	RCC_ClockSecuritySystemCmd(DISABLE);
