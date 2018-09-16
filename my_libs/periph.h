@@ -113,6 +113,17 @@ Info        : 07.09.2018
 #define  PIN_SCL GPIO_Pin_10 /* TIM2_CH4 */
 #define PORT_SCL GPIOB
 
+/*#define MPU6050_I2C_RCC_DMA		RCC_AHBPeriph_DMA1*/
+#define MPU6050_I2C_RCC_Periph	RCC_APB1Periph_I2C2
+#define MPU6050_I2C_RCC_Port	( RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO )
+
+#define MPU6050_I2C_SCL_Pin		GPIO_Pin_10
+#define MPU6050_I2C_SDA_Pin		GPIO_Pin_11
+#define MPU6050_I2C_Port		GPIOB
+
+#define MPU6050_I2C_Speed		400000
+#define MPU6050_I2C				I2C2
+
 /* usart pins */
 #define  PIN_RX GPIO_Pin_7
 #define PORT_SDA GPIOB
