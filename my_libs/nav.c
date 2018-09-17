@@ -65,8 +65,6 @@ uint8_t dir_L = 0, dir_R = 0;
 uint8_t go = 0;/*for enabling/disabling control, global variable*/
 
 void EXTI9_5_IRQHandler(void){
-	/* interrupt request from button ? */
-
 
 	/* interrupt request from encoderL ? */
 	if(SET == EXTI_GetITStatus(EXTI_Line8)){
@@ -75,6 +73,7 @@ void EXTI9_5_IRQHandler(void){
 		return;
 	}
 
+	/* interrupt request from button ? */
 	if(SET == EXTI_GetITStatus(EXTI_Line5)){
 		EXTI->PR = EXTI_Line5;
 		/*do stuff when button pressed*/
@@ -101,7 +100,7 @@ void EXTI15_10_IRQHandler(void){
 	}
 }
 
-
+/* not used at the moment */
 void TIM1_IRQHandler(void){
 	uint16_t timer_sr = TIM1->SR;
 
@@ -114,32 +113,35 @@ void TIM1_IRQHandler(void){
 		else
 			RB.diff_cnt = (TIM1->ARR - RB.prev_cap) + RB.new_cap;
 	}*/
-	if(timer_sr&TIM_SR_CC2IF)/*channel2*/
-	{
-		RA.prev_cap = RA.new_cap;
-		RA.new_cap = TIM1->CCR2;
-		if(RA.prev_cap<RA.new_cap)
-			RA.diff_cnt = RA.new_cap-RA.prev_cap;
-		else
-			RA.diff_cnt = (TIM1->ARR - RA.prev_cap) + RA.new_cap;
 
-		RA.diff_ms = (float)RA.diff_cnt/(timer1_clk*(TIM1->PSC+1));/*ms; IC1PSC = 1, rising edge*/
-		RA.w = 512/(RA.diff_ms*gear_ratio);/*rad/ms*/
-		RA.v = RA.w*RA.d_wheel/2*1000;/*mm/s*/
-	}
-	else if(timer_sr&TIM_SR_CC3IF)/*channel3*/
-	{
-		LA.prev_cap = LA.new_cap;
-		LA.new_cap = TIM1->CCR3;
-		if(LA.prev_cap<LA.new_cap)
-			LA.diff_cnt = LA.new_cap-LA.prev_cap;
-		else
-			LA.diff_cnt = (TIM1->ARR - LA.prev_cap) + LA.new_cap;
 
-		LA.diff_ms = (float)LA.diff_cnt/(timer1_clk*(TIM1->PSC+1));/*IC2PSC = 1, rising edge*/
-		LA.w = 512/(LA.diff_ms*gear_ratio);/*rad/ms*/
-		LA.v = LA.w*LA.d_wheel/2*1000;/*mm/s*/
-	}
+//	if(timer_sr&TIM_SR_CC2IF)/*channel2*/
+//	{
+//		RA.prev_cap = RA.new_cap;
+//		RA.new_cap = TIM1->CCR2;
+//		if(RA.prev_cap<RA.new_cap)
+//			RA.diff_cnt = RA.new_cap-RA.prev_cap;
+//		else
+//			RA.diff_cnt = (TIM1->ARR - RA.prev_cap) + RA.new_cap;
+//
+//		RA.diff_ms = (float)RA.diff_cnt/(timer1_clk*(TIM1->PSC+1));/*ms; IC1PSC = 1, rising edge*/
+//		RA.w = 512/(RA.diff_ms*gear_ratio);/*rad/ms*/
+//		RA.v = RA.w*RA.d_wheel/2*1000;/*mm/s*/
+//	}
+//	else if(timer_sr&TIM_SR_CC3IF)/*channel3*/
+//	{
+//		LA.prev_cap = LA.new_cap;
+//		LA.new_cap = TIM1->CCR3;
+//		if(LA.prev_cap<LA.new_cap)
+//			LA.diff_cnt = LA.new_cap-LA.prev_cap;
+//		else
+//			LA.diff_cnt = (TIM1->ARR - LA.prev_cap) + LA.new_cap;
+//
+//		LA.diff_ms = (float)LA.diff_cnt/(timer1_clk*(TIM1->PSC+1));/*IC2PSC = 1, rising edge*/
+//		LA.w = 512/(LA.diff_ms*gear_ratio);/*rad/ms*/
+//		LA.v = LA.w*LA.d_wheel/2*1000;/*mm/s*/
+//	}
+
 	/*if(timer_sr&TIM_SR_CC4IF)//channel4
 	{
 		LB.prev_cap = LB.new_cap;
