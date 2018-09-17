@@ -71,19 +71,9 @@ int main(void){
 	InitDBG();
 #endif
 
-	/* configure SysTick for delay functions */
-//	InitSysTick();
-
-
-//	InitPeriph();
+	Init_Periph();
+//	Init_Flash();
 //	InitNav();
-
-	/* configure SysTick for delay functions */
-	Init_SysTick();
-	Init_RCC();
-//	InitGPIO();
-	InitEncoder();
-	InitButton0();
 
 
 	/* Unlock the Flash Program Erase controller */
@@ -93,15 +83,11 @@ int main(void){
 	/* Lock the Flash Program Erase controller */
 	FLASH_Lock();
 
-	uint8_t success = 2;
-	success = Init_MPU6050();
-	int16_t accel_gyro_values[6];
-
 	/* TODO - Add your application code here */
 
 	/* Infinite loop */
 	while (1){
-		MPU6050_GetRawAccelGyro( &accel_gyro_values );
+
 	}
 }
 
