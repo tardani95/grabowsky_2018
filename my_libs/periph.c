@@ -43,8 +43,8 @@ void Init_RCC(void){
 	RCC_PLLCmd(ENABLE);
 	while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET);
 
-//	FLASH_SetLatency(FLASH_Latency_1);
-//	FLASH_Unlock();
+	FLASH_SetLatency(FLASH_Latency_1);
+	FLASH_Unlock();
 
 	/* Set PLLCLK as sys clock*/
 	RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK); /* 64 MHz */
