@@ -22,12 +22,6 @@ __IO uint8_t hbState=0;		 	/* heartbeat */
 /*                          Function definitions                              */
 /******************************************************************************/
 
-/**
-  * @brief  increment SysTick counter, useful for delay functions
-  *         with systick f=1kHz, it overflows every 1.19*1000 hours
-  * @param  None
-  * @retval None
-  */
 void Init_SysTick(void){
 
 	RCC_ClocksTypeDef RCC_ClockStruct;
@@ -39,7 +33,8 @@ void Init_SysTick(void){
 
 /**
   * @brief  increment SysTick counter, useful for delay functions
-  *         with systick f=1kHz, it overflows every 49 days
+  *         with systick f=1MHz, it overflows every 1.19 hour
+  *         with systich f=1kHz, it overflows every 49 days
   * @param  None
   * @retval None
   */
@@ -47,12 +42,12 @@ void Init_SysTick(void){
 void SysTick_Handler(void){
 	SysTickCount++;
 
-	if(SysTickCount%2000==0){
+	if(SysTickCount%200==0){ /* the heartbeat led changes it state in every 200ms - f=1kHz*/
 			if(hbState){
-				GPIO_SetBits(LEDs_Port, LED1_Pin);
+				LEDs_Port->BSRR |= LED1_Pin;
+			}else{
+				LEDs_Port->BRR |= LED1_Pin;
 			}
-			else
-				GPIO_ResetBits(LEDs_Port, LED1_Pin);
 
 			hbState=!hbState;
 	}
