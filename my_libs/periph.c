@@ -17,7 +17,7 @@ void Init_Periph(void){
 	/* TODO - needs to be soldered*/
 //	Init_MPU6050();
 
-	InitTIM();
+//	InitTIM();
 
 #ifdef _DEBUG
 	InitDBG();
@@ -43,17 +43,18 @@ void Init_RCC(void){
 	RCC_PLLCmd(ENABLE);
 	while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET);
 
-	FLASH_SetLatency(FLASH_Latency_1);
-	FLASH_Unlock();
+//	FLASH_SetLatency(FLASH_Latency_1);
+//	FLASH_Unlock();
+
 	/* Set PLLCLK as sys clock*/
 	RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK); /* 64 MHz */
 
 
 
 	/* Set HCLK, PCLK1, and PCLK2 */
-	RCC_HCLKConfig(RCC_SYSCLK_Div1);	/* 64 MHz */
-	RCC_PCLK1Config(RCC_HCLK_Div2); 	/* 32 MHz */
-	RCC_PCLK2Config(RCC_HCLK_Div1); 	/* 64 MHz */
+	RCC_HCLKConfig(RCC_SYSCLK_Div1);	/* 64 MHz - AHB  */
+	RCC_PCLK1Config(RCC_HCLK_Div2); 	/* 32 MHz - APB1 */
+	RCC_PCLK2Config(RCC_HCLK_Div1); 	/* 64 MHz - APB2 */
 
 	/* Set ADC clk */
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6); /* 10.6 MHz */
@@ -122,7 +123,7 @@ void Init_Feedback_LEDs(){
 	GPIO_InitTypeDef GPIOInitStruct;
 	GPIO_StructInit(&GPIOInitStruct);
 	GPIOInitStruct.GPIO_Speed	= GPIO_Speed_50MHz;
-	GPIOInitStruct.GPIO_Mode	= GPIO_Mode_AF_PP;
+	GPIOInitStruct.GPIO_Mode	= GPIO_Mode_Out_PP;
 	GPIOInitStruct.GPIO_Pin		= LED0_Pin | LED1_Pin;
 	GPIO_Init(LEDs_Port, &GPIOInitStruct);
 
@@ -462,18 +463,17 @@ uint16_t adcBuf[4]={0};
 void readADC(void){
 
 	for(uint8_t i=0;i<4;i++){
-
-		GPIO_SetBits(ledPorts[i], ledPins[i]);
+//		GPIO_SetBits(ledPorts[i], ledPins[i]);
+		ledPorts[i]->BSRR = ledPins[i];
 
 		ADC_SoftwareStartConvCmd(PTrs_ADC, ENABLE);
 
 		while(ADC_GetFlagStatus(PTrs_ADC, ADC_FLAG_EOC) == RESET);   /* Wait until conversion completion */
 
-		GPIO_ResetBits(ledPorts[i], ledPins[i]);
-
+//		GPIO_ResetBits(ledPorts[i], ledPins[i]);
+		ledPorts[i]->BRR = ledPins[i];
 
 		adcBuf[i]=PTrs_ADC->DR;
-
 	}
 
 }

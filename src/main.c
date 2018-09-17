@@ -72,22 +72,19 @@ int main(void){
 #endif
 
 	Init_Periph();
-//	Init_Flash();
-//	InitNav();
+	Init_EEPROM();
+	InitNav();
 
-
-	/* Unlock the Flash Program Erase controller */
-	FLASH_Unlock();
-	/* EEPROM Init */
-	EE_Init();
-	/* Lock the Flash Program Erase controller */
-	FLASH_Lock();
 
 	/* TODO - Add your application code here */
+	LEDs_Port->BSRR |= LED0_Pin;
+	DelayUs(200);
 
 	/* Infinite loop */
 	while (1){
-
+		LEDs_Port->BRR |= LED0_Pin;
+		readADC();
+		LEDs_Port->BSRR |= LED0_Pin;
 	}
 }
 
