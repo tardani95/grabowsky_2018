@@ -49,7 +49,17 @@ Info        : 07.09.2018
 #define  PIN_Q_LS GPIO_Pin_3
 #define PORT_Q_LS GPIOA*/
 
+/*
+#define  PIN_ADC1_IN0 GPIO_Pin_0
+#define  PIN_ADC1_IN1 GPIO_Pin_1
+#define  PIN_ADC1_IN3 GPIO_Pin_3
+#define  PIN_ADC1_IN4 GPIO_Pin_4
+
+#define PORT_ADC1 GPIOA
+*/
+
 /* IR diode output pins, TIM3 channels */
+/*
 #define  PIN_D_RS GPIO_Pin_7
 #define PORT_D_RS GPIOA
 
@@ -61,18 +71,72 @@ Info        : 07.09.2018
 
 #define  PIN_D_LS GPIO_Pin_0
 #define PORT_D_LS GPIOB
-
+*/
 
 /* status led outputs, inverted */
-#define  PIN_LED1 GPIO_Pin_9
-#define PORT_LED1 GPIOB
-
+/*
 #define  PIN_LED0 GPIO_Pin_8
 #define PORT_LED0 GPIOB
+
+#define  PIN_LED1 GPIO_Pin_9
+#define PORT_LED1 GPIOB
+*/
+
+
+/* heartbeat led - inverted*/
+#define LED0_Pin 			GPIO_Pin_8
+/* status led - inverted*/
+#define LED1_Pin 			GPIO_Pin_9
+#define LEDs_Port 			GPIOB
+#define LEDs_RCC_Ports		(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO)
+
+
+/* ir diode pins - output push pull */
+#define IRDiodes_RCC_Port	(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB)
+
+#define IRDiode_RS_Pin		GPIO_Pin_7
+#define IRDiode_RF_Pin		GPIO_Pin_6
+#define IRDiode_R_Port		GPIOA
+
+#define IRDiode_LS_Pin		GPIO_Pin_1
+#define IRDiode_LF_Pin		GPIO_Pin_0
+#define IRDiode_L_Port		GPIOB
+
+
+/* photo transistor pins - analog input */
+#define PTrs_RCC_Port		RCC_APB2Periph_GPIOA
+
+#define PTr_RS_Pin			GPIO_Pin_0
+#define PTr_RF_Pin			GPIO_Pin_1
+#define PTr_LF_Pin			GPIO_Pin_3
+#define PTr_LS_Pin			GPIO_Pin_4 /* TODO - check correctness pin 3 */
+#define PTrs_Port			GPIOA
+
+/* ADC defines */
+#define ADC_SAMPLE_TIME 	ADC_SampleTime_41Cycles5
+#define PTrs_RCC_Periph		RCC_APB2Periph_ADC1
+#define PTrs_ADC			ADC1
+#define PTr_RS_ADC_Ch		ADC_Channel_0
+#define PTr_RF_ADC_Ch		ADC_Channel_1
+#define PTr_LF_ADC_Ch		ADC_Channel_3
+#define PTr_LS_ADC_Ch		ADC_Channel_4 /* TODO - check correctness */
 
 /* tactile switch input */
 #define  PIN_SW0 GPIO_Pin_5
 #define PORT_SW0 GPIOB
+
+/* mpu6050 pins and settings */
+/*#define MPU6050_I2C_RCC_DMA		RCC_AHBPeriph_DMA1*/
+#define MPU6050_I2C_RCC_Periph	RCC_APB1Periph_I2C2
+#define MPU6050_I2C_RCC_Port	( RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO )
+
+#define MPU6050_I2C_SCL_Pin		GPIO_Pin_10
+#define MPU6050_I2C_SDA_Pin		GPIO_Pin_11
+#define MPU6050_I2C_Port		GPIOB
+
+#define MPU6050_I2C_Speed		115200
+#define MPU6050_I2C				I2C2
+
 
 /* motor driver outputs */
 /* REMAP: AE=TIM2_CH2, BE=TIM2_CH1 */
@@ -115,32 +179,12 @@ Info        : 07.09.2018
 #define  PIN_SCL GPIO_Pin_10 /* TIM2_CH4 */
 #define PORT_SCL GPIOB
 
-/*#define MPU6050_I2C_RCC_DMA		RCC_AHBPeriph_DMA1*/
-#define MPU6050_I2C_RCC_Periph	RCC_APB1Periph_I2C2
-#define MPU6050_I2C_RCC_Port	( RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO )
-
-#define MPU6050_I2C_SCL_Pin		GPIO_Pin_10
-#define MPU6050_I2C_SDA_Pin		GPIO_Pin_11
-#define MPU6050_I2C_Port		GPIOB
-
-#define MPU6050_I2C_Speed		115200
-#define MPU6050_I2C				I2C2
-
 /* usart pins */
 #define  PIN_RX GPIO_Pin_7
 #define PORT_SDA GPIOB
 
 #define  PIN_TX GPIO_Pin_6
 #define PORT_SCL GPIOB
-
-/* adc pins */
-#define  PIN_ADC1_IN0 GPIO_Pin_0
-#define  PIN_ADC1_IN1 GPIO_Pin_1
-#define  PIN_ADC1_IN2 GPIO_Pin_2
-#define  PIN_ADC1_IN3 GPIO_Pin_3
-#define  PIN_ADC1_IN4 GPIO_Pin_4
-
-#define PORT_ADC1 GPIOA
 
 
 /* peripheral config defines */
@@ -154,8 +198,7 @@ Info        : 07.09.2018
 #define MOT_R 				1 /* right */
 
 
-/* ADC defines */
-#define ADC_SAMPLE_TIME 	ADC_SampleTime_41Cycles5
+
 
 
 
@@ -166,18 +209,29 @@ extern uint16_t adcBuf[4];
 extern uint8_t go;
 
 /* init functions */
-void InitPeriph(void);
+void Init_Periph(void);
 
 void Init_RCC(void);
-void InitGPIO(void);
+void Init_MotorControl_GPIO(void);
 void InitDBG(void);
 void InitADC(void);
-void InitEXTI(void);
 
-void InitEncoder(void);
-void InitButton0(void);
+/* gpio */
+void Init_Feedback_LEDs(void);
 
+/* gpio with exti */
+void Init_Encoder(void);
+void Init_Button0(void);
+
+/* gpio with adc */
+void Init_PTrs_IRLEDs(void);
+
+
+/* gpio with i2c */
 uint8_t Init_MPU6050(void);
+
+
+
 
 void InitTIM(void);
 void InitTIM1(void);

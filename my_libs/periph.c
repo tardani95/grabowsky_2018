@@ -1,21 +1,24 @@
 #include "periph.h"
 
 /* init every peripheral used,  */
-void InitPeriph(void){
+void Init_Periph(void){
 
 	Init_RCC();
 	Init_SysTick();
 
-	InitGPIO();
+	Init_MotorControl_GPIO();
+	Init_Feedback_LEDs();
 
-	InitEXTI();
+	Init_PTrs_IRLEDs();
 
-	InitADC();
+	Init_Encoder();
+	Init_Button0();
+
+	/* TODO - needs to be soldered*/
+//	Init_MPU6050();
+
 	InitTIM();
 
-	//InitUSART();
-	//InitNVIC();
-	//InitI2C();
 #ifdef _DEBUG
 	InitDBG();
 #endif
@@ -59,37 +62,19 @@ void Init_RCC(void){
 	RCC_MCOConfig(RCC_MCO_SYSCLK); /*output SYSCLK on PA8, GPIO_Pin_PA8 must be AFIO */
 #endif
 }
-void InitGPIO(void){
+void Init_MotorControl_GPIO(void){
+
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE); /* frees up PB3 and PA15 */
-	GPIO_PinRemapConfig(GPIO_PartialRemap1_TIM2, ENABLE); /* TIM2_CH1=PA15, TIM2_CH2=PB3 */
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE); /* frees up PB3 and PA15    - motor control */
+	GPIO_PinRemapConfig(GPIO_PartialRemap1_TIM2, ENABLE); /* TIM2_CH1=PA15, TIM2_CH2=PB3 - motor control */
 
 	GPIO_InitTypeDef GPIOInitStruct;
 	GPIO_StructInit(&GPIOInitStruct);
 
 	GPIOInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-
-	/* GPIOA, outputs */
-	GPIOInitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIOInitStruct.GPIO_Pin= PIN_D_RS | PIN_D_RF;
-
-	GPIO_Init(GPIOA, &GPIOInitStruct);
-
-	/* GPIOA, inputs */
-	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-//	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IPD;
-	GPIOInitStruct.GPIO_Pin= /*PIN_ENC_IDX_R | PIN_ENC_LSB_R | PIN_ENC_DIR_R |*/ PIN_ENC_LSB_L | PIN_ENC_DIR_L;
-
-	GPIO_Init(GPIOA, &GPIOInitStruct);
-
-	/* GPIOA, analog in */
-	GPIOInitStruct.GPIO_Mode = GPIO_Mode_AIN;
-	GPIOInitStruct.GPIO_Pin= PIN_ADC1_IN0 | PIN_ADC1_IN1 | PIN_ADC1_IN3 | PIN_ADC1_IN4;
-
-	GPIO_Init(GPIOA, &GPIOInitStruct);
 
 	/* GPIOA, afio */
 	GPIOInitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -97,24 +82,11 @@ void InitGPIO(void){
 
 	GPIO_Init(GPIOA, &GPIOInitStruct);
 
-
-
-
-	/**************/
-
 	/* GPIOB, outputs */
 	GPIOInitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIOInitStruct.GPIO_Pin= PIN_D_LS | PIN_D_LF | PIN_LED0 | PIN_LED1 | PIN_DRV_AP | PIN_DRV_BP;
+	GPIOInitStruct.GPIO_Pin= PIN_DRV_AP | PIN_DRV_BP;
 
 	GPIO_Init(GPIOB, &GPIOInitStruct);
-
-	/* GPIOB, inputs */
-	GPIOInitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIOInitStruct.GPIO_Pin = PIN_ENC_IDX_L;
-
-	GPIO_Init(GPIOB, &GPIOInitStruct);
-
-
 
 	/* GPIOB, afio */
 	GPIOInitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -126,42 +98,69 @@ void InitGPIO(void){
 #ifdef _DEBUG_MCO
 	/* MCO ouput. See init RCC for further options */
 	GPIOInitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIOInitStruct.GPIO_Pin =GPIO_Pin_8;
+	GPIOInitStruct.GPIO_Pin = GPIO_Pin_8;
 
 	GPIO_Init(GPIOA, &GPIOInitStruct);
 #endif
 
 }
+
 void InitTIM(void){
 	InitTIM2();
 	InitTIM4();
 }
-void InitADC(void){
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+void InitDBG(){
 
+}
+
+/* init heartbeat and the other feedback led*/
+void Init_Feedback_LEDs(){
+
+	RCC_APB2PeriphClockCmd(LEDs_RCC_Ports, ENABLE);
+
+	GPIO_InitTypeDef GPIOInitStruct;
+	GPIO_StructInit(&GPIOInitStruct);
+	GPIOInitStruct.GPIO_Speed	= GPIO_Speed_50MHz;
+	GPIOInitStruct.GPIO_Mode	= GPIO_Mode_AF_PP;
+	GPIOInitStruct.GPIO_Pin		= LED0_Pin | LED1_Pin;
+	GPIO_Init(LEDs_Port, &GPIOInitStruct);
+
+}
+
+/* init photo transistors and ir leds */
+void Init_PTrs_IRLEDs(){
+
+	RCC_APB2PeriphClockCmd(IRDiodes_RCC_Port, ENABLE);
+	RCC_APB2PeriphClockCmd(PTrs_RCC_Port, ENABLE);
+
+	/* init GPIO */
+	GPIO_InitTypeDef GPIOInitStruct;
+	GPIO_StructInit(&GPIOInitStruct);
+	GPIOInitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+
+		/* infra leds */
+		GPIOInitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIOInitStruct.GPIO_Pin  = IRDiode_RS_Pin | IRDiode_RF_Pin;
+		GPIO_Init(IRDiode_R_Port, &GPIOInitStruct);
+
+		GPIOInitStruct.GPIO_Pin  = IRDiode_LS_Pin | IRDiode_LF_Pin;
+		GPIO_Init(IRDiode_L_Port, &GPIOInitStruct);
+
+
+		/* photo tr */
+		GPIOInitStruct.GPIO_Mode = GPIO_Mode_AIN;
+		GPIOInitStruct.GPIO_Pin  = PTr_RS_Pin | PTr_RF_Pin | PTr_LF_Pin | PTr_LS_Pin;
+
+		GPIO_Init(PTrs_Port, &GPIOInitStruct);
+
+
+	/* init ADC */
+	RCC_APB2PeriphClockCmd(PTrs_RCC_Periph, ENABLE);
 
 	ADC_InitTypeDef ADC_InitStructure;
-	DMA_InitTypeDef DMA_InitStructure;
-
-
-	DMA_DeInit(DMA1_Channel1);
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&(ADC1->DR);
-	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)adcBuf;
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-	DMA_InitStructure.DMA_BufferSize = 4;
-	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-	DMA_Init(DMA1_Channel1, &DMA_InitStructure);
-
-	//DMA_Cmd(DMA1_Channel1, ENABLE);
-
+	ADC_DeInit(PTrs_ADC);
+	ADC_StructInit(&ADC_InitStructure);
 	/* ADC1 configuration */
 	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
 	ADC_InitStructure.ADC_ScanConvMode =DISABLE;
@@ -169,38 +168,30 @@ void InitADC(void){
 	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
 	ADC_InitStructure.ADC_NbrOfChannel = 4;
-	ADC_Init(ADC1, &ADC_InitStructure);
+	ADC_Init(PTrs_ADC, &ADC_InitStructure);
 	/* ADC1 regular channels configuration */
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SAMPLE_TIME);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 2, ADC_SAMPLE_TIME);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 3, ADC_SAMPLE_TIME);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 4, ADC_SAMPLE_TIME);
+	ADC_RegularChannelConfig(PTrs_ADC, PTr_RS_ADC_Ch, 1, ADC_SAMPLE_TIME);
+	ADC_RegularChannelConfig(PTrs_ADC, PTr_LF_ADC_Ch, 2, ADC_SAMPLE_TIME);
+	ADC_RegularChannelConfig(PTrs_ADC, PTr_RF_ADC_Ch, 3, ADC_SAMPLE_TIME);
+	ADC_RegularChannelConfig(PTrs_ADC, PTr_LS_ADC_Ch, 4, ADC_SAMPLE_TIME);
 
-	ADC_DiscModeChannelCountConfig(ADC1,1);
+	ADC_DiscModeChannelCountConfig(PTrs_ADC,1);
 
-	ADC_DiscModeCmd(ADC1,ENABLE);
-	/* Enable ADC1 DMA */
-	//ADC_DMACmd(ADC1, ENABLE);
-	ADC_Cmd(ADC1,ENABLE);
+	ADC_DiscModeCmd(PTrs_ADC,ENABLE);
+	ADC_Cmd(PTrs_ADC,ENABLE);
 
 	/* Enable ADC1 reset calibaration register */
-	ADC_ResetCalibration(ADC1);
+	ADC_ResetCalibration(PTrs_ADC);
 	/* Check the end of ADC1 reset calibration register */
-	while(ADC_GetResetCalibrationStatus(ADC1));
+	while(ADC_GetResetCalibrationStatus(PTrs_ADC));
 	/* Start ADC1 calibaration */
-	ADC_StartCalibration(ADC1);
+	ADC_StartCalibration(PTrs_ADC);
 	/* Check the end of ADC1 calibration */
-	while(ADC_GetCalibrationStatus(ADC1));
-}
-void InitDBG(void){
-
-
+	while(ADC_GetCalibrationStatus(PTrs_ADC));
 }
 
-
-
-/*rising falling edge detection for encoders*/
-void InitEncoder(){
+/* rising falling edge detection for encoders*/
+void Init_Encoder(){
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -261,8 +252,8 @@ void InitEncoder(){
 
 }
 
-/*init button*/
-void InitButton0(){
+/* init button*/
+void Init_Button0(){
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
@@ -298,7 +289,7 @@ void InitButton0(){
 
 /* init mpu6050*/
 uint8_t Init_MPU6050(){
-
+	/* functions from mpu6050 lib */
 	MPU6050_I2C_Init();
 	MPU6050_Initialize();
 	return MPU6050_TestConnection(); /* returns 0 if it is working */
@@ -456,15 +447,15 @@ void MotCtl(float duty,uint8_t side){
 }
 
 
-uint16_t ledPins[4]={	PIN_D_RS,
-							PIN_D_LF,
-							PIN_D_RF,
-							PIN_D_LS};
+uint16_t ledPins[4]={	IRDiode_RS_Pin,
+						IRDiode_LF_Pin,
+						IRDiode_RF_Pin,
+						IRDiode_LS_Pin};
 
-GPIO_TypeDef* ledPorts[4]={PORT_D_RS,
-					PORT_D_LF,
-					PORT_D_RF,
-					PORT_D_LS};
+GPIO_TypeDef* ledPorts[4]={	IRDiode_R_Port,
+							IRDiode_L_Port,
+							IRDiode_R_Port,
+							IRDiode_L_Port};
 
 uint16_t adcBuf[4]={0};
 
@@ -474,17 +465,17 @@ void readADC(void){
 
 		GPIO_SetBits(ledPorts[i], ledPins[i]);
 
-		ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+		ADC_SoftwareStartConvCmd(PTrs_ADC, ENABLE);
 
-		while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);   /* Wait until conversion completion */
+		while(ADC_GetFlagStatus(PTrs_ADC, ADC_FLAG_EOC) == RESET);   /* Wait until conversion completion */
 
 		GPIO_ResetBits(ledPorts[i], ledPins[i]);
 
 
-		adcBuf[i]=ADC1->DR;
-
+		adcBuf[i]=PTrs_ADC->DR;
 
 	}
+
 }
 
 

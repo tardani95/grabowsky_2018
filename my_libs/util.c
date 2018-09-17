@@ -49,10 +49,10 @@ void SysTick_Handler(void){
 
 	if(SysTickCount%2000==0){
 			if(hbState){
-				GPIO_SetBits(PORT_LED1, PIN_LED1);
+				GPIO_SetBits(LEDs_Port, LED1_Pin);
 			}
 			else
-				GPIO_ResetBits(PORT_LED1, PIN_LED1);
+				GPIO_ResetBits(LEDs_Port, LED1_Pin);
 
 			hbState=!hbState;
 	}
