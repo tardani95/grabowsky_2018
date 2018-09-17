@@ -24,6 +24,21 @@ __IO uint8_t hbState=0;		 	/* heartbeat */
 
 /**
   * @brief  increment SysTick counter, useful for delay functions
+  *         with systick f=1kHz, it overflows every 1.19*1000 hours
+  * @param  None
+  * @retval None
+  */
+void Init_SysTick(void){
+
+	RCC_ClocksTypeDef RCC_ClockStruct;
+	RCC_GetClocksFreq(&RCC_ClockStruct);
+
+	SysTick_Config(RCC_ClockStruct.SYSCLK_Frequency/SYS_TICK_FREQ-1); /* 1ms/SysClk tick */
+
+}
+
+/**
+  * @brief  increment SysTick counter, useful for delay functions
   *         with systick f=1kHz, it overflows every 49 days
   * @param  None
   * @retval None
@@ -41,20 +56,6 @@ void SysTick_Handler(void){
 
 			hbState=!hbState;
 	}
-}
-
-/**
-  * @brief  increment SysTick counter, useful for delay functions
-  *         with systick f=1kHz, it overflows every 1.19*1000 hours
-  * @param  None
-  * @retval None
-  */
-void Init_SysTick(void){
-
-	RCC_ClocksTypeDef RCC_ClockStruct;
-	RCC_GetClocksFreq(&RCC_ClockStruct);
-
-	SysTick_Config(RCC_ClockStruct.SYSCLK_Frequency/SYS_TICK_FREQ-1); /* 1ms/SysClk tick */
 }
 
 uint32_t GetSysTickCount(void){
