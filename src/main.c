@@ -75,16 +75,15 @@ int main(void){
 	Init_EEPROM();
 	InitNav();
 
+	uint8_t success = 2;
+	success = Init_MPU6050();
+	int16_t accel_gyro_values[6];
 
 	/* TODO - Add your application code here */
-	LEDs_Port->BSRR |= LED0_Pin;
-	DelayUs(200);
 
 	/* Infinite loop */
 	while (1){
-		LEDs_Port->BRR |= LED0_Pin;
-		readADC();
-		LEDs_Port->BSRR |= LED0_Pin;
+		MPU6050_GetRawAccelGyro( &accel_gyro_values );
 	}
 }
 
