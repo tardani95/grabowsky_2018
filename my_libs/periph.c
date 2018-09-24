@@ -106,15 +106,6 @@ void Init_MotorControl_GPIO(void){
 
 }
 
-void InitTIM(void){
-	InitTIM2();
-	InitTIM4();
-}
-
-void InitDBG(){
-
-}
-
 /* init heartbeat and the other feedback led*/
 void Init_Feedback_LEDs(){
 
@@ -346,6 +337,15 @@ uint8_t Init_MPU6050(){
 
 	I2C_Cmd(I2C2, ENABLE);
 }*/
+
+void InitTIM(void){
+	InitTIM2();
+	InitTIM4();
+}
+
+void InitDBG(){
+
+}
 
 void InitTIM2(void){
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
