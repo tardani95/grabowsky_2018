@@ -17,7 +17,7 @@ void Init_Periph(void){
 	/* TODO - needs to be soldered*/
 //	Init_MPU6050();
 
-//	InitTIM();
+	InitTIM();
 
 #ifdef _DEBUG
 	InitDBG();
@@ -168,8 +168,8 @@ void Init_PTrs_IRLEDs(){
 	ADC_RegularChannelConfig(PTrs_ADC, PTr_LS_ADC_Ch, 4, ADC_SAMPLE_TIME);
 
 	ADC_DiscModeChannelCountConfig(PTrs_ADC,1);
-
 	ADC_DiscModeCmd(PTrs_ADC,ENABLE);
+
 	ADC_Cmd(PTrs_ADC,ENABLE);
 
 	/* Enable ADC1 reset calibaration register */

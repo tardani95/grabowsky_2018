@@ -98,8 +98,8 @@ Info        : 07.09.2018
 #define IRDiode_RF_Pin		GPIO_Pin_6
 #define IRDiode_R_Port		GPIOA
 
-#define IRDiode_LS_Pin		GPIO_Pin_1
-#define IRDiode_LF_Pin		GPIO_Pin_0
+#define IRDiode_LS_Pin		GPIO_Pin_0
+#define IRDiode_LF_Pin		GPIO_Pin_1
 #define IRDiode_L_Port		GPIOB
 
 
