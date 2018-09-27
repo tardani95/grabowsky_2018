@@ -46,7 +46,7 @@ void SysTick_Handler(void){
 			if(hbState){
 				LEDs_Port->BSRR |= LED1_Pin;
 			}else{
-				LEDs_Port->BRR |= LED1_Pin;
+//				LEDs_Port->BRR |= LED1_Pin;
 			}
 
 			hbState=!hbState;
