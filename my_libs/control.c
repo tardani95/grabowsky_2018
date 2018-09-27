@@ -31,17 +31,35 @@ float s=0;
 
 float v=0;
 
+/* control loop @1kHz */
 void TIM4_IRQHandler(void){
-
 
 	if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET){
         TIM_ClearITPendingBit(TIM4,  TIM_IT_Update);
+
+        /*switch(controll_mode){
+
+        case MOVE_FWD :{
+
+        }break;
+
+        case TURN :{
+
+        }break;
+
+        case MOVE_X_CELL :{
+
+        }break;
+
+        }*/
+
+        /*test pid*/
 
         readADC();
 
         e_d=e;
 
-        e=(adcBuf[1]-adcBuf[2])/e_max; /* L-R */
+        e=(adcBuf[1]-adcBuf[2])/e_max; // L-R
 
         D=Kd*(e-e_d)/T;
 
