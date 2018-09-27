@@ -66,19 +66,19 @@ uint8_t go = 0;/*for enabling/disabling control, global variable*/
 
 void EXTI9_5_IRQHandler(void){
 
-	/* interrupt request from encoderL ? */
+	/* interrupt request from encoderL */
 	if(SET == EXTI_GetITStatus(EXTI_Line8)){
 		EXTI->PR = EXTI_Line8;
 		ENC_Left++;
 		return;
 	}
 
-	/* interrupt request from button ? */
+	/* interrupt request from button */
 	if(SET == EXTI_GetITStatus(EXTI_Line5)){
 		EXTI->PR = EXTI_Line5;
 		/*do stuff when button pressed*/
 		/*start/stop motors*/
-		if(!go){
+		/*if(!go){
 			go = 1;
 			MotCtl(duty_start, MOT_R);
 			MotCtl(duty_start, MOT_L);
@@ -87,13 +87,15 @@ void EXTI9_5_IRQHandler(void){
 			MotCtl(0, MOT_R);
 			MotCtl(0, MOT_L);
 			go = 0;
-		}
+		}*/
+		ENC_SetLeftValue(0);
+		ENC_SetRightValue(0);
 	}
 }
 
 
 void EXTI15_10_IRQHandler(void){
-	/* interrupt request from encoderR ? */
+	/* interrupt request from encoderR */
 	if(SET == EXTI_GetITStatus(EXTI_Line10)){
 		EXTI->PR = EXTI_Line10;
 		ENC_Right++;
