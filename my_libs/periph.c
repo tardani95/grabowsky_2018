@@ -287,57 +287,6 @@ uint8_t Init_MPU6050(){
 	return MPU6050_TestConnection(); /* returns 0 if it is working */
 }
 
-/*init mpu6050*/
-/*void InitMPU6050(){
-
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-
-	GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_StructInit(&GPIO_InitStructure);
-
-	GPIO_InitStructure.GPIO_Pin = PIN_SCL | PIN_SDA;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-
-
-	NVIC_InitTypeDef NVIC_InitStructure;
-
-	NVIC_InitStructure.NVIC_IRQChannel = I2C2_EV_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-
-	NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-
-
-	I2C_DeInit(I2C2);
-
-	I2C_InitTypeDef I2C_InitStructure;
-
-	I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
-	I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-	I2C_InitStructure.I2C_ClockSpeed = 100000;
-	I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
-	I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
-	I2C_InitStructure.I2C_OwnAddress1 = 0;
-	I2C_Init(I2C2, &I2C_InitStructure);
-
-	I2C_ITConfig(I2C2, I2C_IT_EVT, ENABLE);
-	I2C_ITConfig(I2C2, I2C_IT_BUF, ENABLE);
-	I2C_ITConfig(I2C2, I2C_IT_ERR, ENABLE);
-
-	I2C_Cmd(I2C2, ENABLE);
-}*/
-
 void InitTIM(void){
 	InitTIM2();
 	InitTIM4();
