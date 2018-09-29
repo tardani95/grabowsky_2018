@@ -94,32 +94,32 @@ Info        : 07.09.2018
 /* ir diode pins - output push pull */
 #define IRDiodes_RCC_Port	(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB)
 
-#define IRDiode_RS_Pin		GPIO_Pin_7
-#define IRDiode_RF_Pin		GPIO_Pin_6
+#define IRDiode_RS_Pin		GPIO_Pin_6
+#define IRDiode_RF_Pin		GPIO_Pin_7
 #define IRDiode_R_Port		GPIOA
 
-#define IRDiode_LS_Pin		GPIO_Pin_0
-#define IRDiode_LF_Pin		GPIO_Pin_1
+#define IRDiode_LS_Pin		GPIO_Pin_1
+#define IRDiode_LF_Pin		GPIO_Pin_0
 #define IRDiode_L_Port		GPIOB
 
 
 /* photo transistor pins - analog input */
 #define PTrs_RCC_Port		RCC_APB2Periph_GPIOA
 
-#define PTr_RS_Pin			GPIO_Pin_0
-#define PTr_RF_Pin			GPIO_Pin_1
-#define PTr_LF_Pin			GPIO_Pin_3
-#define PTr_LS_Pin			GPIO_Pin_4 /* TODO - check correctness pin 3 */
+#define PTr_RS_Pin			GPIO_Pin_1
+#define PTr_RF_Pin			GPIO_Pin_0
+#define PTr_LF_Pin			GPIO_Pin_4
+#define PTr_LS_Pin			GPIO_Pin_3
 #define PTrs_Port			GPIOA
 
 /* ADC defines */
 #define ADC_SAMPLE_TIME 	ADC_SampleTime_41Cycles5
 #define PTrs_RCC_Periph		RCC_APB2Periph_ADC1
 #define PTrs_ADC			ADC1
-#define PTr_RS_ADC_Ch		ADC_Channel_0
-#define PTr_RF_ADC_Ch		ADC_Channel_1
-#define PTr_LF_ADC_Ch		ADC_Channel_3
-#define PTr_LS_ADC_Ch		ADC_Channel_4 /* TODO - check correctness */
+#define PTr_RS_ADC_Ch		ADC_Channel_1
+#define PTr_RF_ADC_Ch		ADC_Channel_0
+#define PTr_LF_ADC_Ch		ADC_Channel_4
+#define PTr_LS_ADC_Ch		ADC_Channel_3
 
 /* tactile switch input */
 #define  PIN_SW0 GPIO_Pin_5
