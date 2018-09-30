@@ -28,6 +28,7 @@ Info        : 07.09.2018
 #include "stm32f10x_exti.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_dma.h"
+#include "stm32f10x_i2c.h"
 
 
 /* High level functions for NVIC and SysTick (add-on to CMSIS functions)
@@ -126,7 +127,7 @@ Info        : 07.09.2018
 #define PORT_SW0 GPIOB
 
 /* mpu6050 pins and settings */
-/*#define MPU6050_I2C_RCC_DMA		RCC_AHBPeriph_DMA1*/
+#define MPU6050_I2C_RCC_DMA		RCC_AHBPeriph_DMA1
 #define MPU6050_I2C_RCC_Periph	RCC_APB1Periph_I2C2
 #define MPU6050_I2C_RCC_Port	( RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO )
 
@@ -228,7 +229,7 @@ void Init_PTrs_IRLEDs(void);
 
 
 /* gpio with i2c */
-uint8_t Init_MPU6050(void);
+uint8_t Init_MPU6050();
 
 
 

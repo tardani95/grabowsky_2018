@@ -102,6 +102,44 @@ void EXTI15_10_IRQHandler(void){
 	}
 }
 
+void I2C2_EV_IRQHandler(void) {
+	if (I2C_GetFlagStatus(I2C2, I2C_FLAG_SB) == SET) {
+		if (i2cDirectionWrite) {
+			// STM32 Transmitter
+			I2C_Send7bitAddress(I2C2, MPU6050_DEFAULT_ADDRESS, I2C_Direction_Transmitter);
+		} else {
+			// STM32 Receiver
+			I2C_Send7bitAddress(I2C2, MPU6050_DEFAULT_ADDRESS, I2C_Direction_Receiver);
+		}
+	} else if (I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED) == SUCCESS) {
+		if (i2cDirectionWrite) {
+			// STM32 Transmitter
+			DMA_Cmd(DMA1_Channel4, ENABLE);
+		}
+	} else if (I2C_GetFlagStatus(I2C2, I2C_FLAG_BTF)) {
+		if (i2cDirectionWrite) {
+			// STM32 Transmitter
+			DMA_Cmd(DMA1_Channel5, ENABLE);
+			I2C_DMALastTransferCmd(I2C2, ENABLE);
+			I2C_GenerateSTART(I2C2, ENABLE);
+			i2cDirectionWrite = 0;
+			I2C_ClearFlag(I2C2, I2C_FLAG_BTF);
+		}
+	}
+}
+
+// mpu6050 readings are ready
+void DMA1_Channel5_IRQHandler(void) {
+	DMA_ClearFlag(DMA1_FLAG_TC5);
+	I2C_GenerateSTOP(I2C2, ENABLE);
+	DMA_Cmd(DMA1_Channel4, DISABLE);
+	DMA_Cmd(DMA1_Channel5, DISABLE);
+
+	// TODO - turn led on
+
+}
+
+
 /* not used at the moment */
 void TIM1_IRQHandler(void){
 	uint16_t timer_sr = TIM1->SR;

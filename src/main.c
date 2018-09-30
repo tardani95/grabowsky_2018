@@ -20,6 +20,7 @@ Info        : 14-09-2018
 #include "control.h"
 #include "nav.h"
 #include "maze.h"
+#include "mpu6050.h"
 
 /*==========================================================================*/
 /*                            Private typedef								*/
@@ -29,7 +30,7 @@ Info        : 14-09-2018
 /*==========================================================================*/
 /*                            Private define								*/
 /*==========================================================================*/
-
+//#define DEBUG
 
 /*==========================================================================*/
 /*                            Private macro									*/
@@ -51,13 +52,12 @@ Info        : 14-09-2018
 /*==========================================================================*/
 #ifdef DEBUG
 	#include "stm32f10x_dbgmcu.h"
-
-	void InitDBG(void){
-		DBGMCU_Config(DBGMCU_TIM2_STOP, ENABLE); /* this will make TIM2 stop when core is halted during debug */
-		DBGMCU_Config(DBGMCU_TIM3_STOP, ENABLE);
-		DBGMCU_Config(DBGMCU_STOP, ENABLE);
-	}
 #endif
+
+
+
+uint8_t i2cRxBuffer[14] = {};
+uint8_t i2cTxBuffer[] = { 0x3B };
 
 /*==========================================================================*/
 /*  							Main program								*/
@@ -78,14 +78,16 @@ int main(void){
 	uint8_t success = 2;
 	success = Init_MPU6050();
 	int16_t accel_gyro_values[6];
+//	Init_MPU6050_I2C_DMA(i2cTxBuffer, i2cRxBuffer);
 
 
 
 	/* TODO - Add your application code here */
 
 	LEDs_Port->BSRR |= LED0_Pin;
-	DelayUs(500);  /* delay ms  not us*/
-
+//	DelayUs(500);  /* delay ms  not us*/
+//	MPU6050_DMAGetRawAccelGyro();
+	LEDs_Port->BRR |= LED0_Pin;
 	/* Infinite loop */
 	while (1){
 //		MPU6050_GetRawAccelGyro( &accel_gyro_values );

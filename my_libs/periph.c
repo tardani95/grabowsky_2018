@@ -293,7 +293,9 @@ void InitTIM(void){
 }
 
 void InitDBG(){
-
+	DBGMCU_Config(DBGMCU_TIM2_STOP, ENABLE); /* this will make TIM2 stop when core is halted during debug */
+	DBGMCU_Config(DBGMCU_TIM3_STOP, ENABLE);
+	DBGMCU_Config(DBGMCU_STOP, ENABLE);
 }
 
 void InitTIM2(void){

@@ -8,6 +8,10 @@
 void TIM1_IRQHandler(void);
 void EXTI9_5_IRQHandler(void);
 void EXTI15_10_IRQHandler(void);
+
+void I2C2_EV_IRQHandler(void);
+void DMA1_Channel5_IRQHandler(void);
+
 void GetClkFreq(void);
 
 typedef struct{

@@ -315,11 +315,9 @@ void MPU6050_I2C_Init(){
 
 	GPIO_InitTypeDef GPIO_InitStructure;
     I2C_InitTypeDef I2C_InitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
-	DMA_InitTypeDef DMA_InitStructure;
+
 
     /* Enable I2C and GPIO clocks */
-//    RCC_AHBPeriphClockCmd(MPU6050_I2C_RCC_DMA, ENABLE);
     RCC_APB1PeriphClockCmd(MPU6050_I2C_RCC_Periph, ENABLE);
     RCC_APB2PeriphClockCmd(MPU6050_I2C_RCC_Port, ENABLE);
 
@@ -339,13 +337,24 @@ void MPU6050_I2C_Init(){
     I2C_InitStructure.I2C_OwnAddress1 = 0; // MPU6050_DEFAULT_ADDRESS; // MPU6050 7-bit adress = 0x68, 8-bit adress = 0xD0;
     I2C_Init(MPU6050_I2C, &I2C_InitStructure);
 
-//    I2C_ITConfig(I2C2, I2C_IT_EVT, ENABLE);
-//	I2C_ITConfig(I2C2, I2C_IT_ERR, ENABLE);
-
     /* I2C Peripheral Enable */
     I2C_Cmd(MPU6050_I2C, ENABLE);
+}
 
-    /*
+void Init_MPU6050_I2C_DMA(uint8_t* i2cTxBuffer, uint8_t* i2cRxBuffer){
+
+	RCC_AHBPeriphClockCmd(MPU6050_I2C_RCC_DMA, ENABLE);
+
+	NVIC_InitTypeDef NVIC_InitStructure;
+	DMA_InitTypeDef DMA_InitStructure;
+
+
+//	I2C_Cmd(MPU6050_I2C, DISABLE);
+    I2C_ITConfig(I2C2, I2C_IT_EVT, ENABLE);
+//	I2C_ITConfig(I2C2, I2C_IT_ERR, ENABLE);
+
+    I2C_Cmd(MPU6050_I2C, ENABLE);
+
 	I2C_DMACmd(I2C2, ENABLE);
 
 	NVIC_InitStructure.NVIC_IRQChannel = I2C2_EV_IRQn;
@@ -354,11 +363,11 @@ void MPU6050_I2C_Init(){
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+//	NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
+//	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+//	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+//	NVIC_Init(&NVIC_InitStructure);
 
 	// DMA Channel 4 - I2C2 TX
 	DMA_InitStructure.DMA_BufferSize = 0;
@@ -395,7 +404,6 @@ void MPU6050_I2C_Init(){
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-	*/
 }
 
 /**
@@ -517,6 +525,18 @@ void MPU6050_I2C_BufferRead(u8 slaveAddr, u8* pBuffer, u8 readAddr, u16 NumByteT
     I2C_AcknowledgeConfig(MPU6050_I2C, ENABLE);
     // EXT_CRT_SECTION();
 }
+
+void MPU6050_DMAGetRawAccelGyro(){
+
+	/* TODO - turn led off */
+
+	i2cDirectionWrite = 1;
+	DMA_SetCurrDataCounter(DMA1_Channel4, 1);
+	DMA_SetCurrDataCounter(DMA1_Channel5, 14); /* read from registers: 0x3B to 0x48 (accel, temp , gyro) */
+	I2C_GenerateSTART(I2C2, ENABLE);
+	/* end of transfer functions found in nav.c*/
+}
+
 /**
  * @}
  *//* end of group MPU6050_Library */
