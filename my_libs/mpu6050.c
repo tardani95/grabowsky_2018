@@ -529,7 +529,7 @@ void MPU6050_I2C_BufferRead(u8 slaveAddr, u8* pBuffer, u8 readAddr, u16 NumByteT
 void MPU6050_DMAGetRawAccelGyro(){
 
 	/* TODO - turn led off */
-
+	LEDs_Port->BSRR |= LED0_Pin;
 	i2cDirectionWrite = 1;
 	DMA_SetCurrDataCounter(DMA1_Channel4, 1);
 	DMA_SetCurrDataCounter(DMA1_Channel5, 14); /* read from registers: 0x3B to 0x48 (accel, temp , gyro) */

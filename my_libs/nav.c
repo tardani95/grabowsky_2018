@@ -136,7 +136,7 @@ void DMA1_Channel5_IRQHandler(void) {
 	DMA_Cmd(DMA1_Channel5, DISABLE);
 
 	// TODO - turn led on
-
+	LEDs_Port->BRR |= LED0_Pin;
 }
 
 
