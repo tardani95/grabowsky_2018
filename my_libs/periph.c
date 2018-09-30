@@ -7,17 +7,26 @@ void Init_Periph(void){
 	Init_SysTick();
 
 	Init_MotorControl_GPIO();
+	DelayUs(2);
 	Init_Feedback_LEDs();
+	DelayUs(2);
 
 	Init_PTrs_IRLEDs();
+	DelayUs(2);
 
 	Init_Encoder();
+	DelayUs(2);
 	Init_Button0();
+	DelayUs(2);
 
-	/* TODO - needs to be soldered*/
-//	Init_MPU6050();
+	uint8_t success = 2;
+	success = Init_MPU6050();
+	DelayUs(2);
+	Init_MPU6050_I2C_DMA(i2cTxBuffer, i2cRxBuffer);
+	DelayUs(10);
 
 	InitTIM();
+	DelayUs(2);
 
 #ifdef _DEBUG
 	InitDBG();
@@ -342,9 +351,9 @@ void InitTIM4(void){
 
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 
-	TIM_TimeBaseStructure.TIM_Prescaler =0 ;
+	TIM_TimeBaseStructure.TIM_Prescaler = 1;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseStructure.TIM_Period = 64000-1; /* 1kHz */
+	TIM_TimeBaseStructure.TIM_Period = 64000-1; /* 0.5kHz */
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
 

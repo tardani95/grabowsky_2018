@@ -16,6 +16,13 @@ uint16_t timer1_clk;
 float d_wheel = 18;/*mm*/
 float gear_ratio = 4;/*#cogs_wheel/#cogs_magnet*/
 
+uint8_t i2cRxBuffer[14] = {};
+uint8_t i2cTxBuffer[] = { 0x3B };
+int16_t accel_gyro_temp[7];
+float gForceX, gForceY, gForceZ;
+float rotX, rotY, rotZ;
+float temp_C;
+
 void InitNav(void){
 	InitCapture(&RA);
 	InitCapture(&LA);
@@ -136,7 +143,32 @@ void DMA1_Channel5_IRQHandler(void) {
 	DMA_Cmd(DMA1_Channel5, DISABLE);
 
 	// TODO - turn led on
+	LEDs_Port->BSRR |= LED0_Pin;
+	MPU6050_CalcAccelRot();
 	LEDs_Port->BRR |= LED0_Pin;
+}
+
+void MPU6050_CalcAccelRot(){
+	accel_gyro_temp[0] = (int16_t) (i2cRxBuffer[0]<<8 | i2cRxBuffer[1]);
+	accel_gyro_temp[1] = (int16_t) (i2cRxBuffer[2]<<8 | i2cRxBuffer[3]);
+	accel_gyro_temp[2] = (int16_t) (i2cRxBuffer[4]<<8 | i2cRxBuffer[5]);
+	accel_gyro_temp[6] = (int16_t) (i2cRxBuffer[6]<<8 | i2cRxBuffer[7]); //temp
+	accel_gyro_temp[3] = (int16_t) (i2cRxBuffer[8]<<8 | i2cRxBuffer[9]);
+	accel_gyro_temp[4] = (int16_t) (i2cRxBuffer[10]<<8 | i2cRxBuffer[11]);
+	accel_gyro_temp[5] = (int16_t) (i2cRxBuffer[12]<<8 | i2cRxBuffer[13]);
+
+//	gForceX = (float) accel_gyro_temp[0] / 16384.0 * 9810;
+//	gForceY = (float) accel_gyro_temp[1] / 16384.0 * 9810;
+//	gForceZ = (float) accel_gyro_temp[2] / 16384.0 * 9810;
+	gForceX = (float) accel_gyro_temp[0] / 1.67;
+	gForceY = (float) accel_gyro_temp[1] / 1.67;
+	gForceZ = (float) accel_gyro_temp[2] / 1.67;
+
+	rotX = (float) accel_gyro_temp[3] / 65.5; //131.0; gyro @250 [LSB / deg/s]
+	rotY = (float) accel_gyro_temp[4] / 65.5; //65.5   gyro @500 [LSB / deg/s]
+	rotZ = (float) accel_gyro_temp[5] / 65.5; //131.0;
+
+	temp_C = (float) accel_gyro_temp[6] / 340 + 36.53;
 }
 
 

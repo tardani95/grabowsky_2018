@@ -56,8 +56,7 @@ Info        : 14-09-2018
 
 
 
-uint8_t i2cRxBuffer[14] = {};
-uint8_t i2cTxBuffer[] = { 0x3B };
+
 
 /*==========================================================================*/
 /*  							Main program								*/
@@ -76,27 +75,22 @@ int main(void){
 	Init_EEPROM();
 	DelayUs(2);
 	InitNav();
-	DelayUs(2);
 
-	uint8_t success = 2;
-	success = Init_MPU6050();
-	int16_t accel_gyro_values[6];
-	Init_MPU6050_I2C_DMA(i2cTxBuffer, i2cRxBuffer);
-	DelayUs(1);
+
 
 
 	/* TODO - Add your application code here */
 
 
 //	DelayUs(500);  /* delay ms  not us*/
-	MPU6050_DMAGetRawAccelGyro();
-	DelayUs(2);
-	MPU6050_DMAGetRawAccelGyro();
-	DelayUs(2);
-	MPU6050_DMAGetRawAccelGyro();
-	DelayUs(2);
+//	MPU6050_DMAGetRawAccelGyro();
+//	DelayUs(2);
+//	MPU6050_DMAGetRawAccelGyro();
+//	DelayUs(2);
+//	MPU6050_DMAGetRawAccelGyro();
+//	DelayUs(2);
 
-	LEDs_Port->BSRR |= LED0_Pin;
+//	LEDs_Port->BSRR |= LED0_Pin;
 	/* Infinite loop */
 	while (1){
 //		MPU6050_GetRawAccelGyro( &accel_gyro_values );

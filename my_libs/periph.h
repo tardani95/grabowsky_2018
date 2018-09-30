@@ -18,6 +18,7 @@ Info        : 07.09.2018
 #include <math.h>
 #include "conf.h"
 #include "util.h"
+#include "nav.h"
 #include "mpu6050.h"
 
 #include "stm32f10x.h"
@@ -135,7 +136,7 @@ Info        : 07.09.2018
 #define MPU6050_I2C_SDA_Pin		GPIO_Pin_11
 #define MPU6050_I2C_Port		GPIOB
 
-#define MPU6050_I2C_Speed		115200
+#define MPU6050_I2C_Speed		400000 // maximum bus speed 400kHz defined in datasheet
 #define MPU6050_I2C				I2C2
 
 

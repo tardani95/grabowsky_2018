@@ -46,7 +46,7 @@
 void MPU6050_Initialize()
 {
     MPU6050_SetClockSource(MPU6050_CLOCK_PLL_XGYRO);
-    MPU6050_SetFullScaleGyroRange(MPU6050_GYRO_FS_250);
+    MPU6050_SetFullScaleGyroRange(MPU6050_GYRO_FS_500);   //MPU6050_GYRO_FS_250);
     MPU6050_SetFullScaleAccelRange(MPU6050_ACCEL_FS_2);
     MPU6050_SetSleepModeStatus(DISABLE);
 }
@@ -529,7 +529,7 @@ void MPU6050_I2C_BufferRead(u8 slaveAddr, u8* pBuffer, u8 readAddr, u16 NumByteT
 void MPU6050_DMAGetRawAccelGyro(){
 
 	/* TODO - turn led off */
-	LEDs_Port->BSRR |= LED0_Pin;
+//	LEDs_Port->BSRR |= LED0_Pin;
 	i2cDirectionWrite = 1;
 	DMA_SetCurrDataCounter(DMA1_Channel4, 1);
 	DMA_SetCurrDataCounter(DMA1_Channel5, 14); /* read from registers: 0x3B to 0x48 (accel, temp , gyro) */

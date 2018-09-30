@@ -4,6 +4,12 @@
 
 #include "periph.h"
 
+extern uint8_t i2cRxBuffer[14];
+extern uint8_t i2cTxBuffer[1];
+extern int16_t accel_gyro_temp[7];
+extern float gForceX, gForceY, gForceZ;
+extern float rotX, rotY, rotZ;
+extern float temp_C;
 
 void TIM1_IRQHandler(void);
 void EXTI9_5_IRQHandler(void);
@@ -11,6 +17,7 @@ void EXTI15_10_IRQHandler(void);
 
 void I2C2_EV_IRQHandler(void);
 void DMA1_Channel5_IRQHandler(void);
+void MPU6050_CalcAccelRot(void);
 
 void GetClkFreq(void);
 

@@ -53,9 +53,14 @@ void TIM4_IRQHandler(void){
 
         }*/
 
+//        LEDs_Port->BSRR |= LED0_Pin;
+		MPU6050_DMAGetRawAccelGyro();
+		readADC();
+//		MPU6050_CalcAccelRot();
+//		LEDs_Port->BRR |= LED0_Pin;
+
         /*test pid*/
 
-        readADC();
 
         e_d=e;
 
