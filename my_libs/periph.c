@@ -21,7 +21,7 @@ void Init_Periph(void){
 
 	uint8_t success = 2;
 	success = Init_MPU6050();
-	DelayUs(2);
+	DelayUs(10);
 	Init_MPU6050_I2C_DMA(i2cTxBuffer, i2cRxBuffer);
 	DelayUs(10);
 
