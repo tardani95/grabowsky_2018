@@ -14,15 +14,15 @@ float Kd=0.1; /* D */
 float e=0;
 float e_d=0;
 
-float e_max=2000.0;
-
+//float e_max=2000.0;
+float e_max = 4000.0;
 float I=0;
 float D=0;
 
 float Imax=1.0; /* anti wind-up */
 
 
-float v_max=0.0;
+float v_max=3.0;
 
 float v_base=0.0; //0.4
 
@@ -57,7 +57,7 @@ void TIM4_IRQHandler(void){
         }*/
 
 //        LEDs_Port->BSRR |= LED0_Pin;
-		MPU6050_DMAGetRawAccelGyro();
+//		MPU6050_DMAGetRawAccelGyro();
 		readADC();
 //		MPU6050_CalcAccelRot();
 //		LEDs_Port->BRR |= LED0_Pin;
@@ -67,7 +67,7 @@ void TIM4_IRQHandler(void){
 
         e_d=e;
 
-        e=(adcBuf[0]-adcBuf[3])/e_max; // L-R
+        e=(ENC_GetLeftValue()-ENC_GetRightValue())/e_max; // L-R
 
         D=Kd*(e-e_d)/T;
 
