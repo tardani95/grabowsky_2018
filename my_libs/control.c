@@ -1,5 +1,5 @@
 #include "control.h"
-
+#include "nav.h"
 
 /* control loop @1kHz */
 #define RS 0
@@ -10,7 +10,7 @@
 //float T=0.001; // @1   kHz
 float T=0.002; // @0.5 kHz
 
-float Kp=0.25; /* P */ //1.5
+float Kp=0.2; /* P */ //1.5
 float Ki=0.0; /* I */ // 0.05
 float Kd=0.0; /* D */ //0.1
 
@@ -88,9 +88,16 @@ void TIM4_IRQHandler(void){
         v=v_max*s/3.5;
 
 
-		MotCtl(v_base+v,MOT_L);
-		MotCtl(v_base-v,MOT_R);
+//		MotCtl(v_base+v,MOT_L);
+//		MotCtl(v_base-v,MOT_R);
 
+		if( ENC_GetLeftValue() > 1000000){
+			TIM_Cmd(TIM4,DISABLE); // stops the control loop
+			v_base = 0;
+			MotCtl(0, MOT_L);
+			MotCtl(0, MOT_R);
 
+			goState = 0;
+		}
    }
 }

@@ -10,6 +10,7 @@ extern int16_t accel_gyro_temp[7];
 extern float gForceX, gForceY, gForceZ;
 extern float rotX, rotY, rotZ;
 extern float temp_C;
+extern uint8_t goState;
 
 void TIM1_IRQHandler(void);
 void EXTI9_5_IRQHandler(void);

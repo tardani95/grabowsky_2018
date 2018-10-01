@@ -92,7 +92,7 @@ void EXTI9_5_IRQHandler(void){
 		if(!goState){
 			goState = 1;
 //			MotCtl(0.4, MOT_R);
-			v_base = 0.2; // TODO - change it
+			v_base = 0.5; // TODO - change it
 			TIM_Cmd(TIM4,ENABLE); // starts the control loop
 		}
 		else {
