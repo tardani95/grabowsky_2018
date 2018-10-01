@@ -237,8 +237,8 @@ uint8_t Init_MPU6050();
 
 void InitTIM(void);
 void InitTIM1(void);
-
 void InitTIM2(void);
+void InitTIM3(void);
 void InitTIM4(void);
 
 /* high level control functions */

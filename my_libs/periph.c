@@ -5,6 +5,7 @@ void Init_Periph(void){
 
 	Init_RCC();
 	Init_SysTick();
+	DelayUs(2);
 
 	Init_MotorControl_GPIO();
 	DelayUs(2);
@@ -19,8 +20,7 @@ void Init_Periph(void){
 	Init_Button0();
 	DelayUs(2);
 
-	uint8_t success = 2;
-	success = Init_MPU6050();
+	Init_MPU6050();
 	DelayUs(10);
 	Init_MPU6050_I2C_DMA(i2cTxBuffer, i2cRxBuffer);
 	DelayUs(10);
@@ -297,7 +297,9 @@ uint8_t Init_MPU6050(){
 }
 
 void InitTIM(void){
+	InitTIM1(); // not used
 	InitTIM2();
+	InitTIM3();	// not used
 	InitTIM4();
 }
 
@@ -305,6 +307,10 @@ void InitDBG(){
 	DBGMCU_Config(DBGMCU_TIM2_STOP, ENABLE); /* this will make TIM2 stop when core is halted during debug */
 	DBGMCU_Config(DBGMCU_TIM3_STOP, ENABLE);
 	DBGMCU_Config(DBGMCU_STOP, ENABLE);
+}
+
+void InitTIM1(void){
+
 }
 
 void InitTIM2(void){
@@ -343,6 +349,9 @@ void InitTIM2(void){
 	TIM_CtrlPWMOutputs(TIM2, ENABLE);
 }
 
+void InitTIM3(void){
+
+}
 
 
 /* timer for control loop */
@@ -373,7 +382,7 @@ void InitTIM4(void){
 	TIM_ITConfig(TIM4,TIM_IT_Update,ENABLE);
 
 	/* TIM4 counter enable */
-	TIM_Cmd(TIM4, ENABLE);
+//	TIM_Cmd(TIM4, ENABLE);
 }
 
 
@@ -381,7 +390,7 @@ void InitTIM4(void){
 
 /* eg.: MotCtl(0.12, MOT_FRW, MOT_L) */
 void MotCtl(float duty,uint8_t side){
-	if(duty<MOT_PWM_MAX_DUTY && duty>-MOT_PWM_MAX_DUTY && go){
+	if(duty<MOT_PWM_MAX_DUTY && duty>-MOT_PWM_MAX_DUTY){  // TODO - go condition removed from if
 		// invalid. assert?
 		uint16_t newC=(float)MOT_PWM_T*fabsf(duty);
 
@@ -421,7 +430,6 @@ GPIO_TypeDef* ledPorts[4]={	IRDiode_R_Port,
 uint16_t adcBuf[4]={0};
 
 void readADC(void){
-
 	for(uint8_t i=0;i<4;i++){
 //		GPIO_SetBits(ledPorts[i], ledPins[i]);
 		ledPorts[i]->BSRR = ledPins[i];
@@ -435,7 +443,6 @@ void readADC(void){
 
 		adcBuf[i]=PTrs_ADC->DR;
 	}
-
 }
 
 
