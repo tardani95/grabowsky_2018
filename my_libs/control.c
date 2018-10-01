@@ -4,7 +4,8 @@
 /* control loop @1kHz */
 
 
-float T=0.001;
+//float T=0.001; // @1   kHz
+float T=0.002; // @0.5 kHz
 
 float Kp=1.5; /* P */
 float Ki=0.05; /* I */
@@ -29,7 +30,9 @@ float v_base=0.0; //0.4
 
 float s=0;
 
+float r=0;
 float v=0;
+float a=0;
 
 /* control loop @1kHz */
 void TIM4_IRQHandler(void){
@@ -64,7 +67,7 @@ void TIM4_IRQHandler(void){
 
         e_d=e;
 
-        e=(adcBuf[1]-adcBuf[2])/e_max; // L-R
+        e=(adcBuf[0]-adcBuf[3])/e_max; // L-R
 
         D=Kd*(e-e_d)/T;
 

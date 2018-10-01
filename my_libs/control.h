@@ -5,7 +5,8 @@
 
 #include "periph.h"
 
-void TIM4_IRQHandler(void);
+extern float v_base;
 
+void TIM4_IRQHandler(void);
 
 #endif
