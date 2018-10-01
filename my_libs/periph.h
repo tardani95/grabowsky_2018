@@ -194,8 +194,8 @@ Info        : 07.09.2018
 /* motor defines */
 #define MOT_PWM_T 			(16000) /* 4kHz @ 64MHz SYSCLK */
 #define MOT_PWM_MAX_DUTY 	(0.8f)
-#define MOT_FRW 			Bit_SET /* forward */
-#define MOT_REV 			Bit_RESET /* reverse */
+#define MOT_FRW 			Bit_RESET /* forward */
+#define MOT_REV 			Bit_SET   /* reverse */
 #define MOT_L 				0 /* left */
 #define MOT_R 				1 /* right */
 

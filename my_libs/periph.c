@@ -5,24 +5,24 @@ void Init_Periph(void){
 
 	Init_RCC();
 	Init_SysTick();
-	DelayUs(2);
+	DelayUs(5);
 
 	Init_MotorControl_GPIO();
-	DelayUs(2);
+	DelayUs(5);
 	Init_Feedback_LEDs();
-	DelayUs(2);
+	DelayUs(5);
 
 	Init_PTrs_IRLEDs();
-	DelayUs(2);
+	DelayUs(5);
 
 	Init_Encoder();
-	DelayUs(2);
+	DelayUs(5);
 	Init_Button0();
-	DelayUs(2);
+	DelayUs(5);
 
-	Init_MPU6050();
+//	Init_MPU6050();
 	DelayUs(10);
-	Init_MPU6050_I2C_DMA(i2cTxBuffer, i2cRxBuffer);
+//	Init_MPU6050_I2C_DMA(i2cTxBuffer, i2cRxBuffer);
 	DelayUs(10);
 
 	InitTIM();
@@ -292,7 +292,9 @@ void Init_Button0(){
 uint8_t Init_MPU6050(){
 	/* functions from mpu6050 lib */
 	MPU6050_I2C_Init();
+	DelayUs(5);
 	MPU6050_Initialize();
+	DelayUs(5);
 	return MPU6050_TestConnection(); /* returns 0 if it is working */
 }
 
@@ -403,12 +405,12 @@ void MotCtl(float duty,uint8_t side){
 
 
 		if(side==MOT_L){
-			TIM_SetCompare1(TIM2,newC);
-			GPIO_WriteBit(PORT_DRV_AP,PIN_DRV_AP,phase);
-		}
-		else if(side==MOT_R){
 			TIM_SetCompare2(TIM2,newC);
 			GPIO_WriteBit(PORT_DRV_BP,PIN_DRV_BP,phase);
+		}
+		else if(side==MOT_R){
+			TIM_SetCompare1(TIM2,newC);
+			GPIO_WriteBit(PORT_DRV_AP,PIN_DRV_AP,phase);
 		}
 		else{
 			//invalid. assert?

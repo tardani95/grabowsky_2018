@@ -91,14 +91,15 @@ void EXTI9_5_IRQHandler(void){
 		/*start/stop motors*/
 		if(!goState){
 			goState = 1;
-			v_base = 0.4; // TODO - change it
-			TIM_Cmd(TIM4,ENABLE); // starts the control loop
+			MotCtl(0.4, MOT_R);
+//			v_base = 0.4; // TODO - change it
+//			TIM_Cmd(TIM4,ENABLE); // starts the control loop
 		}
 		else {
-			TIM_Cmd(TIM4,DISABLE); // stops the control loop
-			v_base = 0;
+//			TIM_Cmd(TIM4,DISABLE); // stops the control loop
+//			v_base = 0;
 			MotCtl(0, MOT_R);
-			MotCtl(0, MOT_L);
+//			MotCtl(0, MOT_L);
 			goState = 0;
 		}
 	}
